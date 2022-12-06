@@ -2,11 +2,14 @@
 
 FastClap is an all-in-one software to help assistant directors to count their scenarios.
 
+It's a WebApp on which you can create an account to gain access to our services :
+we provide the simplest way to count your scenario !
+
 ## How does it work?
 
-It's a WebApp on which you can create an account to gain access to our services :
-
-We provide the simplest way to count your scenario !
+Welcome to the FastClap Backend repository !
+You can see here the FastClap REST API that we built to make our Epitech Innovative Project.
+You can read our code to understand how we work or either to implement our API in your own application.
 
 ## Getting Started
 

@@ -1,0 +1,54 @@
+version: '3.9'
+
+x-typeorm: &typeorm-env
+  POSTGRES_HOST: ${POSTGRES_HOST}
+  POSTGRES_PORT: ${POSTGRES_PORT}
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  POSTGRES_DB: ${POSTGRES_DB}
+
+volumes:
+  postgres_data: {}
+
+networks:
+  fastclap-network:
+    external: false
+
+services:
+
+  database:
+    image: postgres
+    container_name: database
+    environment:
+      <<: *typeorm-env
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    restart: on-failure
+    stdin_open: true
+    tty: true
+    networks:
+      - fastclap-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    profiles:
+      - app
+      - all
+    container_name: app
+    build:
+      dockerfile: dev/Dockerfile
+      context: ../
+    networks:
+      - fastclap-network
+    volumes:
+      - ../apps:/app/apps
+    depends_on:
+      - database
+    env_file:
+      - .env
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    environment:
+      <<: *typeorm-env
+    entrypoint: [ "npm", "run", "start:dev" ]

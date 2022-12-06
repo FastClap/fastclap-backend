@@ -1,8 +1,8 @@
 {
-  "name": "backend",
+  "name": "@fastclap/backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "FastClap description",
+  "author": "Gurvan LE LETTY, Martin VANAUD & Tibo PENDINO",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -22,11 +22,17 @@
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/swagger": "^6.1.3",
+    "@nestjs/typeorm": "^9.0.1",
+    "helmet": "^6.0.1",
+    "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "typeorm": "^0.3.11"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

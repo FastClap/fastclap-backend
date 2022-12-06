@@ -15,7 +15,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Post('login/:id')
+  @Post('login')
   login(): string {
     return this.appService.getHello();
   }

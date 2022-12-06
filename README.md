@@ -65,13 +65,14 @@ POSTGRES_DB=
 **Copy this file and rename it as `.env`**
 
 You can see that three fields are empty (`POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB`).
-Put your database superuser credentials in the `.env` file. (They must be kept warn !)
+Choose your database superuser credentials and write them in the `.env` file. (They must be kept warn !)
 
 And now, let's run the Docker containers :
 ```bash
 docker-compose --profile all up
 ```
 
+If you have any error (especially already in use error), delete all your containers, images and volumes ([Docker documentation](https://docs.docker.com/engine/reference/commandline/rm/)) and stop running postgresql services.
 ### Usage
 
 **[COMING SOON]** You can access the platform by this link :  [http://localhost:3000/](http://localhost:3000/)

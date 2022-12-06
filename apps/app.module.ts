@@ -18,6 +18,7 @@ import { User } from './app.entity';
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
         entities: [User],
+        // TODO - Switch to false before passing in production on the following line
         synchronize: true,
       }),
       inject: [ConfigService],

@@ -12,4 +12,4 @@ RUN npm install
 EXPOSE 3000
 
 ENTRYPOINT ["npm"]
-CMD ["run", "start:dev"]
+CMD [ "run", "start:dev", "--tsc" ]

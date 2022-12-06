@@ -42,7 +42,7 @@ services:
     networks:
       - fastclap-network
     volumes:
-      - ../apps:/app/apps
+      - ../apps:/home/node/app/apps
     depends_on:
       - postgres-db
     env_file:
@@ -51,4 +51,4 @@ services:
       - ${APP_PORT}:${APP_PORT}
     environment:
       <<: *typeorm-env
-    entrypoint: [ "npm", "run", "start:dev" ]
+    entrypoint: [ "npm", "run", "start:dev", "--tsc" ]

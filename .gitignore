@@ -13,6 +13,7 @@ node_modules/
 # Ignore build directories.
 /build
 /dist
+/coverage
 
 # ignore log files and databases
 *.log
@@ -41,5 +42,15 @@ node_modules/
 *.der
 *.key
 *.pem
+.env
 
 # ignore project specific files
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+package-lock.json
+yarn-lock.json

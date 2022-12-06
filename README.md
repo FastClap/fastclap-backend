@@ -43,6 +43,27 @@ Now move to the `dev/` folder :
 cd dev
 ```
 
+You'll find a `env.example` file that contains all the secrets you'll need to make your app working.
+It should look like that :
+```bash
+NODE_ENV=development
+
+APP_HOST=localhost
+APP_PORT=3000
+
+# Put on the following line the name of the database container, neither localhost nor 127.0.0.1
+POSTGRES_HOST=database
+POSTGRES_PORT=5432
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+```
+
+**Copy this file and rename it as `.env`**
+
+You can see that three fields are empty (`POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB`).
+Put your database superuser credentials in the `.env` file. (They must be kept warn !)
+
 And now, let's run the Docker containers :
 ```bash
 docker-compose --profile all up
@@ -50,8 +71,9 @@ docker-compose --profile all up
 
 ### Usage
 
-**[COMING SOON]** Now that your project is running on port 3000, you can check that all is good by entering [http;//localhost:3000/healthcheck](http;//localhost:3000/healthcheck) in your browser.</br>
-**[COMING SOON]** You can also have access to the documentation at the following address:  [http;//localhost:3000/docs](http;//localhost:3000/docs)
+**[COMING SOON]** You can access the platform by this link :  [http://localhost:3000/](http://localhost:3000/)
+**[COMING SOON]** Now that your project is running on port 3000, you can check that all is good by entering [http://localhost:3000/healthcheck](http://localhost:3000/healthcheck) in your browser.</br>
+**[COMING SOON]** You can also have access to the documentation at the following address:  [http://localhost:3000/docs](http://localhost:3000/docs)
 
 ## Get involved
 

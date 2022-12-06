@@ -1,12 +1,27 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Entity({ name: 'people' })
-export class Person extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id!: number;
+@Entity({ name: 'user' })
+export class User {
+  @PrimaryGeneratedColumn('uuid')
+  uuid!: string;
 
   @Column()
-  fullname!: string;
+  firstName!: string;
+
+  @Column()
+  lastName!: string;
+
+  @Column()
+  email!: string;
+
+  @Column()
+  password!: string;
 
   @Column()
   gender!: string;
@@ -17,6 +32,16 @@ export class Person extends BaseEntity {
   @Column()
   age!: number;
 
-  @Column({ name: 'created_at' })
-  createdAt?: Date;
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP()',
+  })
+  createdAt!: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP()',
+    onUpdate: 'CURRENT_TIMESTAMP()',
+  })
+  updatedAt!: Date;
 }

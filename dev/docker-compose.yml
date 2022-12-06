@@ -42,7 +42,7 @@ services:
     networks:
       - fastclap-network
     volumes:
-      - ../app:/app/app
+      - ../apps:/app/apps
     depends_on:
       - database
     env_file:

@@ -1,24 +1,57 @@
-# [PROJECT'S NAME]
+# FastClap
 
-[Project's description]
+FastClap is an all-in-one software to help assistant directors to count their scenarios.
 
 ## How does it work?
 
-[Explain how this project is working]
+It's a WebApp on which you can create an account to gain access to our services :
+
+We provide the simplest way to count your scenario !
 
 ## Getting Started
 
+### Requirement
+
+Before starting, I consider that you have several things installed on your computer :
+- Docker
+- Docker Desktop (macOS only)
+- Git
+- NodeJS
+
 ### Installation
 
-[Explain how to install all of the project's dependencies]
+First, you'll need to clone the GitHub repository :
+```bash
+# via SSH (recommended)
+git clone git@github.com:FastClap/forward-backend.git
+
+# via HTTPS
+git clone https://github.com/FastClap/forward-backend.git
+```
+
+Then, you'll need to install the dependencies.
+Move to the root of the repository and run :
+```bash
+npm install
+```
 
 ### Quickstart
 
-[Explain how to run this project]
+**Great job !** All the dependencies are downloaded.
+Now move to the `dev/` folder :
+```bash
+cd dev
+```
+
+And now, let's run the Docker containers :
+```bash
+docker-compose --profile all up
+```
 
 ### Usage
 
-[Explain how to use this project]
+**[COMING SOON]** Now that your project is running on port 3000, you can check that all is good by entering [http;//localhost:3000/healthcheck](http;//localhost:3000/healthcheck) in your browser.</br>
+**[COMING SOON]** You can also have access to the documentation at the following address:  [http;//localhost:3000/docs](http;//localhost:3000/docs)
 
 ## Get involved
 

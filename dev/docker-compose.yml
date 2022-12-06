@@ -16,9 +16,9 @@ networks:
 
 services:
 
-  database:
+  postgres-db:
     image: postgres
-    container_name: database
+    container_name: ${POSTGRES_HOST}
     environment:
       <<: *typeorm-env
     ports:
@@ -44,7 +44,7 @@ services:
     volumes:
       - ../apps:/app/apps
     depends_on:
-      - database
+      - postgres-db
     env_file:
       - .env
     ports:

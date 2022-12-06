@@ -43,6 +43,7 @@ node_modules/
 *.key
 *.pem
 .env
+dev/.env
 
 # ignore project specific files
 logs

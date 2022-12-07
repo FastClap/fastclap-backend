@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './app.entity';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -19,9 +20,11 @@ import { User } from './app.entity';
         database: configService.get('POSTGRES_DB'),
         entities: [User],
         synchronize: true,
+        autoLoadEntities: true,
       }),
       inject: [ConfigService],
     }),
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProjectModule } from './project/project.module';
+import { MulterModule } from "@nestjs/platform-express";
+import { FileUploadController } from "./file/file.upload.controller";
+import { FileUploadService } from "./file/file.upload.service";
 
 @Module({
   imports: [
@@ -24,8 +27,11 @@ import { ProjectModule } from './project/project.module';
       inject: [ConfigService],
     }),
     ProjectModule,
+    MulterModule.register({
+      dest: './files'
+    }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, FileUploadController],
+  providers: [AppService, FileUploadService],
 })
 export class AppModule {}

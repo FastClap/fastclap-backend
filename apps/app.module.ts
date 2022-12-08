@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from './app.entity';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -17,12 +17,13 @@ import { User } from './app.entity';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [User],
-        // TODO - Switch to false before passing in production on the following line
+        entities: [],
         synchronize: true,
+        autoLoadEntities: true,
       }),
       inject: [ConfigService],
     }),
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,7 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from './app.entity';
+import { ProjectModule } from './project/project.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { FileUploadController } from './file/file.upload.controller';
+import { FileUploadService } from './file/file.upload.service';
 
 import { CategoryModule } from './category/category.module';
 import { TagModule } from './tag/tag.module';
@@ -20,7 +23,7 @@ import { TagModule } from './tag/tag.module';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [User],
+        entities: [],
         synchronize: true,
         autoLoadEntities: true,
       }),
@@ -28,8 +31,12 @@ import { TagModule } from './tag/tag.module';
     }),
     CategoryModule,
     TagModule,
+    ProjectModule,
+    MulterModule.register({
+      dest: './files',
+    }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, FileUploadController],
+  providers: [AppService, FileUploadService],
 })
 export class AppModule {}

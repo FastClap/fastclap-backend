@@ -47,7 +47,6 @@ export class CategoryService {
   }
 
   update(id: string, body: UpdateCategoryDto) {
-    console.log(body);
     this.categoriesRepository.update({ uuid: id }, body).catch((e) => {
       console.error(e);
       throw this.throwUndefinedElement('category');

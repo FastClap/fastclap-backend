@@ -26,8 +26,6 @@ export class FileUploadController {
         let filepath = path.resolve(process.cwd());
         let file_content = await this.downloadService.loadFile(path.join(filepath, "files/", file.filename));
 
-        console.warn({content: file_content});
-
         return {
             originalname: file.originalname,
             filename: file.originalname,

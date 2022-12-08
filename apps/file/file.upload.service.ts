@@ -15,29 +15,5 @@ export class FileUploadService {
             });
         });
 
-        //
-        // console.log("loadFile:", filepath)
-        // const pdfUtil = require("pdf-to-text")
-        //
-        // pdfUtil.info(filepath, function(err, info) {
-        //     if (err) throw(err);
-        //     console.log(info);
-        // });
-        //
-        // pdfUtil.pdfToText(filepath, async function(err, data) {
-        //     if (err) throw(err);
-        //     console.log(data);
-        //     return new Promise<string>(data) (data);
-        // });
-
     }
 }
-/*
-function delay(milliseconds: number, count: number): Promise<number> {
-    return new Promise<number>(resolve => {
-        setTimeout(() => {
-            resolve(count);
-        }, milliseconds);
-    });
- }
- */

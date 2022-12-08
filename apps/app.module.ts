@@ -6,7 +6,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { FileUploadController } from "./file/file.upload.controller";
 import { FileUploadService } from "./file/file.upload.service";
-import { User } from './app.entity';
 
 @Module({
   imports: [
@@ -20,7 +19,7 @@ import { User } from './app.entity';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [User],
+        entities: [],
         synchronize: true,
       }),
       inject: [ConfigService],

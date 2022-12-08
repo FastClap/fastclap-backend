@@ -16,9 +16,9 @@ networks:
 
 services:
 
-  database:
+  postgres-db:
     image: postgres
-    container_name: database
+    container_name: ${POSTGRES_HOST}
     environment:
       <<: *typeorm-env
     ports:
@@ -42,13 +42,13 @@ services:
     networks:
       - fastclap-network
     volumes:
-      - ../apps:/app/apps
+      - ../apps:/home/node/app/apps
     depends_on:
-      - database
+      - postgres-db
     env_file:
       - .env
     ports:
       - ${APP_PORT}:${APP_PORT}
     environment:
       <<: *typeorm-env
-    entrypoint: [ "npm", "run", "start:dev" ]
+    entrypoint: [ "npm", "run", "start:dev", "--tsc" ]

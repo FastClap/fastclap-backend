@@ -17,10 +17,10 @@ export class TagService {
   throwUndefinedElement(type: string): HttpException {
     return new HttpException(
       {
-        status: HttpStatus.FORBIDDEN,
+        status: HttpStatus.NOT_FOUND,
         error: 'Undefined ' + type,
       },
-      HttpStatus.FORBIDDEN,
+      HttpStatus.NOT_FOUND,
     );
   }
 
@@ -55,13 +55,12 @@ export class TagService {
   }
 
   async getOne(id: string): Promise<Tag> {
-    const res = await this.tagsRepository.findOneBy({ uuid: id }).catch((e) => {
-      console.error(e);
-      throw this.throwUndefinedElement('tag');
-    });
-    if (!res) {
-      throw this.throwUndefinedElement('tag');
-    }
+    const res = await this.tagsRepository
+      .findOneByOrFail({ uuid: id })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('tag');
+      });
     return res;
   }
 

@@ -15,10 +15,10 @@ export class CategoryService {
   throwUndefinedElement(type: string): HttpException {
     return new HttpException(
       {
-        status: HttpStatus.FORBIDDEN,
+        status: HttpStatus.NOT_FOUND,
         error: 'Undefined ' + type,
       },
-      HttpStatus.FORBIDDEN,
+      HttpStatus.NOT_FOUND,
     );
   }
 
@@ -27,13 +27,12 @@ export class CategoryService {
   }
 
   getOne(id: string): Promise<Category> {
-    const res = this.categoriesRepository.findOneBy({ uuid: id }).catch((e) => {
-      console.error(e);
-      throw this.throwUndefinedElement('category');
-    });
-    if (!res) {
-      throw this.throwUndefinedElement('category');
-    }
+    const res = this.categoriesRepository
+      .findOneByOrFail({ uuid: id })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('category');
+      });
     return res;
   }
 

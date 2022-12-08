@@ -12,6 +12,16 @@ export class CategoryService {
     private categoriesRepository: Repository<Category>,
   ) {}
 
+  throwUndefinedElement(type: string): HttpException {
+    return new HttpException(
+      {
+        status: HttpStatus.FORBIDDEN,
+        error: 'Undefined ' + type,
+      },
+      HttpStatus.FORBIDDEN,
+    );
+  }
+
   getAll(): Promise<Category[]> {
     return this.categoriesRepository.find();
   }
@@ -19,49 +29,39 @@ export class CategoryService {
   getOne(id: string): Promise<Category> {
     const res = this.categoriesRepository.findOneBy({ uuid: id }).catch((e) => {
       console.error(e);
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: 'Undefined category',
-        },
-        HttpStatus.FORBIDDEN,
-      );
+      throw this.throwUndefinedElement('category');
     });
+    if (!res) {
+      throw this.throwUndefinedElement('category');
+    }
     return res;
   }
 
-  create(body: CreateCategoryDto): string {
+  async exist(id: string): Promise<boolean> {
+    return this.categoriesRepository.exist({ where: { uuid: id } });
+  }
+
+  async create(body: CreateCategoryDto): Promise<string> {
     const newCategory = this.categoriesRepository.create(body);
-    this.categoriesRepository.save(newCategory);
-    return newCategory.uuid;
+    return (await this.categoriesRepository.save(newCategory)).uuid;
   }
 
   update(id: string, body: UpdateCategoryDto) {
     console.log(body);
     this.categoriesRepository.update({ uuid: id }, body).catch((e) => {
       console.error(e);
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: 'Undefined category',
-        },
-        HttpStatus.FORBIDDEN,
-      );
+      throw this.throwUndefinedElement('category');
     });
     return body;
   }
 
-  delete(id: string): string {
-    this.categoriesRepository.delete({ uuid: id }).catch((e) => {
-      console.error(e);
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: 'Undefined category',
-        },
-        HttpStatus.FORBIDDEN,
-      );
-    });
-    return 'Category successfuly deleted';
+  async delete(id: string): Promise<string> {
+    const result = await this.categoriesRepository
+      .delete({ uuid: id })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('category');
+      });
+    return result.affected + ' have been succesfully deleted';
   }
 }

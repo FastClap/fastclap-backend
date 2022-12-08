@@ -26,7 +26,7 @@ export class CategoryController {
   }
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto): string {
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.create(createCategoryDto);
   }
 
@@ -39,7 +39,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string): string {
+  async delete(@Param('id') id: string) {
     return this.categoryService.delete(id);
   }
 }

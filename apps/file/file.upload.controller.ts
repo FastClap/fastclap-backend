@@ -21,10 +21,12 @@ export class FileUploadController {
             fileFilter: uploadFileFilter
         })
     )
-    public async uploadMyFile(@UploadedFile() file: any) {
+    async uploadMyFile(@UploadedFile() file: any) {
 
         let filepath = path.resolve(process.cwd());
-        let file_content = this.downloadService.loadFile(path.join(filepath, "files/", file.filename));
+        let file_content = await this.downloadService.loadFile(path.join(filepath, "files/", file.filename));
+
+        console.warn({content: file_content});
 
         return {
             originalname: file.originalname,

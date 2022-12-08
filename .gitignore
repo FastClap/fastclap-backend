@@ -42,6 +42,7 @@ node_modules/
 *.der
 *.key
 *.pem
+*.env
 
 # ignore project specific files
 logs
@@ -51,5 +52,5 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-package-lock.json
-.env
+package-lock.json*
+yarn-lock.json

@@ -7,6 +7,6 @@ export class CreateSequenceDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsUUID(undefined, { always: true })
+  @IsUUID()
   projectId!: string;
 }

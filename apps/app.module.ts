@@ -9,6 +9,7 @@ import { FileUploadController } from './file/file.upload.controller';
 import { FileUploadService } from './file/file.upload.service';
 
 import { CategoryModule } from './category/category.module';
+import { SequenceModule } from './sequence/sequence.module';
 import { TagModule } from './tag/tag.module';
 
 @Module({
@@ -32,6 +33,7 @@ import { TagModule } from './tag/tag.module';
     CategoryModule,
     TagModule,
     ProjectModule,
+    SequenceModule,
     MulterModule.register({
       dest: './files',
     }),

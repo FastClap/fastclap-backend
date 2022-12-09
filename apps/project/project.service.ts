@@ -25,6 +25,10 @@ export class ProjectService {
     return this.projectRepository.findOneBy({ uuid: id });
   }
 
+  async exist(id: string): Promise<boolean> {
+    return this.projectRepository.exist({ where: { uuid: id } });
+  }
+
   // TODO - Find a way to make the update projectService function returns a Promise<Project>
   async update(id: string, body: UpdateProjectDto) {
     return this.projectRepository.update({ uuid: id }, body);

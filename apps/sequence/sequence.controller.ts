@@ -47,4 +47,9 @@ export class SequenceController {
   async delete(@Param('id') id: string) {
     return this.sequenceService.delete(id);
   }
+
+  @Delete('project/:id')
+  async deleteByProject(@Param('id') id: string) {
+    return this.sequenceService.deleteByProject(id);
+  }
 }

@@ -80,6 +80,16 @@ export class SequenceService {
         console.error(e);
         throw this.throwUndefinedElement('sequence');
       });
-    return result.affected + ' have been succesfully deleted';
+    return result.affected + ' sequences have been succesfully deleted';
+  }
+
+  async deleteByProject(id: string) {
+    const result = await this.sequencesRepository
+      .delete({ projectId: id })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('project');
+      });
+    return result.affected + ' sequences have been succesfully deleted';
   }
 }

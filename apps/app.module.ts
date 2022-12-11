@@ -7,6 +7,7 @@ import { ProjectModule } from './project/project.module';
 import { MulterModule } from '@nestjs/platform-express';
 
 import { CategoryModule } from './category/category.module';
+import { SequenceModule } from './sequence/sequence.module';
 import { TagModule } from './tag/tag.module';
 
 @Module({
@@ -30,6 +31,7 @@ import { TagModule } from './tag/tag.module';
     CategoryModule,
     TagModule,
     ProjectModule,
+    SequenceModule,
     MulterModule.register({
       dest: './files',
     }),

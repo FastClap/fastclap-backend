@@ -1,6 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { ComedianForm } from "./comedian/form.comedian.entity";
-import { PlaceForm } from "./place/form.place.entity";
 
 @Entity({ name: 'form' })
 export class Form {

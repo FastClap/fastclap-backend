@@ -13,50 +13,50 @@ import { UpdateFormDto } from './dto/update-form.dto';
 
 @Controller('form')
 export class FormController {
-    constructor(private readonly tagService: FormService) {}
+    constructor(private readonly formService: FormService) {}
 
     @Get()
     async getAll() {
-        return this.tagService.getAll();
+        return this.formService.getAll();
     }
 
     @Get('project/:id')
     async getAllByProject(@Param('id') id: string) {
-        return this.tagService.getAllByProject(id);
+        return this.formService.getAllByProject(id);
     }
 
     @Get('category/:id')
     async getAllByCategory(@Param('id') id: string) {
-        return this.tagService.getAllByCategory(id);
+        return this.formService.getAllByCategory(id);
     }
 
     @Get(':id')
     async getOne(@Param('id') id: string) {
-        return this.tagService.getOne(id);
+        return this.formService.getOne(id);
     }
 
     @Post()
     async create(@Body() createFormDto: CreateFormDto) {
-        return this.tagService.create(createFormDto);
+        return this.formService.create(createFormDto);
     }
 
     @Patch(':id')
     update(@Param('id') id: string, @Body() updateFormDto: UpdateFormDto) {
-        return this.tagService.update(id, updateFormDto);
+        return this.formService.update(id, updateFormDto);
     }
 
     @Delete(':id')
     async delete(@Param('id') id: string) {
-        return this.tagService.delete(id);
+        return this.formService.delete(id);
     }
 
     @Delete('project/:id')
     async deleteByProject(@Param('id') id: string) {
-        return this.tagService.deleteByProject(id);
+        return this.formService.deleteByProject(id);
     }
 
     @Delete('category/:id')
     async deleteByCategory(@Param('id') id: string) {
-        return this.tagService.deleteByCategory(id);
+        return this.formService.deleteByCategory(id);
     }
 }

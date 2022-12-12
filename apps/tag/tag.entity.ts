@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity({ name: 'tag' })
 export class Tag {
@@ -9,14 +15,27 @@ export class Tag {
   projectId!: string;
 
   @Column()
-  position!: number;
-
-  @Column()
-  length!: number;
-
-  @Column()
   categoryId!: string;
 
   @Column()
+  sequenceId!: string;
+
+  @Column()
+  metadata!: string;
+
+  @Column()
   content!: string;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP()',
+  })
+  createdAt!: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP()',
+    onUpdate: 'CURRENT_TIMESTAMP()',
+  })
+  updatedAt!: Date;
 }

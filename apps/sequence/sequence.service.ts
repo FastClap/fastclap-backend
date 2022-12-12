@@ -18,78 +18,63 @@ export class SequenceService {
     return new HttpException(
       {
         status: HttpStatus.NOT_FOUND,
-        error: 'Undefined ' + type,
+        error: type + 'not found.',
       },
       HttpStatus.NOT_FOUND,
     );
   }
 
-  getAll(): Promise<Sequence[]> {
-    return this.sequencesRepository.find();
-  }
-
-  async getAllByProject(id: string): Promise<Sequence[]> {
-    const projectExist = await this.projectService.exist(id);
-    if (!projectExist) {
+  async create(projectId: string, body: CreateSequenceDto): Promise<string> {
+    const project = await this.projectService.exist(body.projectId);
+    if (!project) {
       throw this.throwUndefinedElement('project');
     }
-    const res = this.sequencesRepository
-      .findBy({ projectId: id })
-      .catch((e) => {
-        console.error(e);
-        throw this.throwUndefinedElement('sequence');
-      });
-    return res;
-  }
-
-  getOne(id: string): Promise<Sequence> {
-    const res = this.sequencesRepository
-      .findOneByOrFail({ uuid: id })
-      .catch((e) => {
-        console.error(e);
-        throw this.throwUndefinedElement('sequence');
-      });
-    return res;
-  }
-
-  async exist(id: string): Promise<boolean> {
-    return this.sequencesRepository.exist({ where: { uuid: id } });
-  }
-
-  async create(body: CreateSequenceDto): Promise<string> {
-    const projectExist = await this.projectService.exist(body.projectId);
-    if (!projectExist) {
-      throw this.throwUndefinedElement('project');
-    }
-    const newSequence = this.sequencesRepository.create(body);
-    return (await this.sequencesRepository.save(newSequence)).uuid;
-  }
-
-  update(id: string, body: UpdateSequenceDto) {
-    this.sequencesRepository.update({ uuid: id }, body).catch((e) => {
-      console.error(e);
-      throw this.throwUndefinedElement('sequence');
+    const sequence: Sequence = this.sequencesRepository.create({
+      ...body,
+      projectId: projectId,
     });
-    return body;
+    return (await this.sequencesRepository.save(sequence)).uuid;
   }
 
-  async delete(id: string): Promise<string> {
-    const result = await this.sequencesRepository
-      .delete({ uuid: id })
+  async findAll(projectId: string): Promise<Sequence[]> {
+    return this.sequencesRepository
+      .findBy({ projectId: projectId })
       .catch((e) => {
         console.error(e);
         throw this.throwUndefinedElement('sequence');
       });
-    return result.affected + ' sequences have been succesfully deleted';
   }
 
-  async deleteByProject(id: string) {
-    const result = await this.sequencesRepository
-      .delete({ projectId: id })
+  async findOne(projectId: string, sequenceId: string): Promise<Sequence> {
+    return this.sequencesRepository
+      .findOneByOrFail({ uuid: sequenceId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project');
+        throw this.throwUndefinedElement('sequence');
       });
-    return result.affected + ' sequences have been succesfully deleted';
+  }
+
+  async update(
+    projectId: string,
+    sequenceId: string,
+    body: UpdateSequenceDto,
+  ): Promise<Sequence> {
+    this.sequencesRepository
+      .update({ uuid: sequenceId, projectId: projectId }, body)
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('sequence');
+      });
+    return this.findOne(projectId, sequenceId);
+  }
+
+  async delete(projectId: string, sequenceId: string): Promise<string> {
+    const result = await this.sequencesRepository
+      .delete({ uuid: sequenceId, projectId: projectId })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('sequence');
+      });
+    return result.affected + ' sequence has been successfully deleted';
   }
 }

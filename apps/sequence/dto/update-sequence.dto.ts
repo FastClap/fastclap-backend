@@ -1,7 +1,6 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { PartialType, PickType } from '@nestjs/swagger';
+import { CreateSequenceDto } from './create-sequence.dto';
 
-export class UpdateSequenceDto {
-  @IsString()
-  @IsNotEmpty()
-  name!: string;
-}
+export class UpdateSequenceDto extends PartialType(
+  PickType(CreateSequenceDto, ['name', 'description']),
+) {}

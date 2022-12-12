@@ -10,46 +10,53 @@ import {
 import { SequenceService } from './sequence.service';
 import { CreateSequenceDto } from './dto/create-sequence.dto';
 import { UpdateSequenceDto } from './dto/update-sequence.dto';
+import { Sequence } from './sequence.entity';
 
-@Controller('sequence')
+@Controller('project/:projectId/sequence')
 export class SequenceController {
   constructor(private readonly sequenceService: SequenceService) {}
 
-  @Get()
-  async getAll() {
-    return this.sequenceService.getAll();
-  }
-
-  @Get('project/:id')
-  async getAllByProject(@Param('id') id: string) {
-    return this.sequenceService.getAllByProject(id);
-  }
-
-  @Get(':id')
-  async getOne(@Param('id') id: string) {
-    return this.sequenceService.getOne(id);
-  }
-
   @Post()
-  async create(@Body() createSequenceDto: CreateSequenceDto) {
-    return this.sequenceService.create(createSequenceDto);
+  async create(
+    @Param('projectId') projectId: string,
+    @Body() createSequenceDto: CreateSequenceDto,
+  ): Promise<string> {
+    return this.sequenceService.create(projectId, createSequenceDto);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
+  @Get()
+  async findAll(@Param('projectId') projectId: string): Promise<Sequence[]> {
+    return this.sequenceService.findAll(projectId);
+  }
+
+  @Get(':sequenceId')
+  async findOne(
+    @Param('projectId') projectId: string,
+    @Param('sequenceId') sequenceId: string,
+  ): Promise<Sequence> {
+    return this.sequenceService.findOne(projectId, sequenceId);
+  }
+
+  // TODO - tag route for sequence
+
+  @Patch(':sequenceId')
+  async update(
+    @Param('projectId') projectId: string,
+    @Param('sequenceId') sequenceId: string,
     @Body() updateSequenceDto: UpdateSequenceDto,
-  ) {
-    return this.sequenceService.update(id, updateSequenceDto);
+  ): Promise<Sequence> {
+    return this.sequenceService.update(
+      projectId,
+      sequenceId,
+      updateSequenceDto,
+    );
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.sequenceService.delete(id);
-  }
-
-  @Delete('project/:id')
-  async deleteByProject(@Param('id') id: string) {
-    return this.sequenceService.deleteByProject(id);
+  @Delete(':sequenceId')
+  async delete(
+    @Param('projectId') projectId: string,
+    @Param('sequenceId') sequenceId: string,
+  ): Promise<string> {
+    return this.sequenceService.delete(projectId, sequenceId);
   }
 }

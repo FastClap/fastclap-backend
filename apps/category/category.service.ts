@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ProjectService } from 'apps/project/project.service';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -10,6 +11,7 @@ export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
+    private readonly projectService: ProjectService,
   ) {}
 
   throwUndefinedElement(type: string): HttpException {
@@ -24,6 +26,19 @@ export class CategoryService {
 
   getAll(): Promise<Category[]> {
     return this.categoriesRepository.find();
+  }
+
+  async getAllByProject(id: string): Promise<Category[]> {
+    const res = await this.categoriesRepository
+      .findBy({ projectId: id })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('project');
+      });
+    if (!res) {
+      throw this.throwUndefinedElement('project');
+    }
+    return res;
   }
 
   getOne(id: string): Promise<Category> {
@@ -41,6 +56,10 @@ export class CategoryService {
   }
 
   async create(body: CreateCategoryDto): Promise<string> {
+    const projectExist = await this.projectService.exist(body.projectId);
+    if (!projectExist) {
+      throw this.throwUndefinedElement('project');
+    }
     const newCategory = this.categoriesRepository.create(body);
     return (await this.categoriesRepository.save(newCategory)).uuid;
   }
@@ -60,6 +79,16 @@ export class CategoryService {
         console.error(e);
         throw this.throwUndefinedElement('category');
       });
-    return result.affected + ' have been succesfully deleted';
+    return result.affected + ' Categories have been succesfully deleted';
+  }
+
+  async deleteByProject(id: string) {
+    const result = await this.categoriesRepository
+      .delete({ projectId: id })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('project');
+      });
+    return result.affected + ' Categories have been succesfully deleted';
   }
 }

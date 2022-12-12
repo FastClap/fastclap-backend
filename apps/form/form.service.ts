@@ -1,19 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Tag } from './tag.entity';
-import { CreateTagDto } from './dto/create-tag.dto';
-import { UpdateTagDto } from './dto/update-tag.dto';
+import { Form } from './form.entity';
+import { CreateFormDto } from './dto/create-form.dto';
+import { UpdateFormDto } from './dto/update-form.dto';
 import { CategoryService } from 'apps/category/category.service';
-import { ProjectService } from 'apps/project/project.service';
 
 @Injectable()
-export class TagService {
+export class FormService {
   constructor(
-    @InjectRepository(Tag)
-    private tagsRepository: Repository<Tag>,
+    @InjectRepository(Form)
+    private formsRepository: Repository<Form>,
     private readonly categoriesService: CategoryService,
-    private readonly projectService: ProjectService,
   ) {}
 
   throwUndefinedElement(type: string): HttpException {
@@ -26,12 +24,12 @@ export class TagService {
     );
   }
 
-  getAll(): Promise<Tag[]> {
-    return this.tagsRepository.find();
+  getAll(): Promise<Form[]> {
+    return this.formsRepository.find();
   }
 
-  async getAllByProject(id: string): Promise<Tag[]> {
-    const res = await this.tagsRepository
+  async getAllByProject(id: string): Promise<Form[]> {
+    const res = await this.formsRepository
       .findBy({ projectId: id })
       .catch((e) => {
         console.error(e);
@@ -43,8 +41,8 @@ export class TagService {
     return res;
   }
 
-  async getAllByCategory(id: string): Promise<Tag[]> {
-    const res = await this.tagsRepository
+  async getAllByCategory(id: string): Promise<Form[]> {
+    const res = await this.formsRepository
       .findBy({ categoryId: id })
       .catch((e) => {
         console.error(e);
@@ -56,62 +54,60 @@ export class TagService {
     return res;
   }
 
-  async getOne(id: string): Promise<Tag> {
-    const res = await this.tagsRepository
+  async getOne(id: string): Promise<Form> {
+    const res = await this.formsRepository
       .findOneByOrFail({ uuid: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('tag');
+        throw this.throwUndefinedElement('form');
       });
     return res;
   }
 
-  async create(body: CreateTagDto): Promise<string> {
+  async create(body: CreateFormDto): Promise<string> {
     const categoryExist = await this.categoriesService.exist(body.categoryId);
     if (!categoryExist) {
       throw this.throwUndefinedElement('category');
     }
-    const projectExist = await this.projectService.exist(body.projectId);
-    if (!projectExist) {
-      throw this.throwUndefinedElement('project');
-    }
-    const newTag = this.tagsRepository.create(body);
-    return (await this.tagsRepository.save(newTag)).uuid;
+    const newForm = this.formsRepository.create(body);
+    return (await this.formsRepository.save(newForm)).uuid;
   }
 
-  update(id: string, body: UpdateTagDto) {
-    this.tagsRepository.update({ uuid: id }, body).catch((e) => {
+  update(id: string, body: UpdateFormDto) {
+    this.formsRepository.update({ uuid: id }, body).catch((e) => {
       console.error(e);
-      throw this.throwUndefinedElement('tag');
+      throw this.throwUndefinedElement('form');
     });
     return body;
   }
 
   async delete(id: string) {
-    const result = await this.tagsRepository.delete({ uuid: id }).catch((e) => {
-      console.error(e);
-      throw this.throwUndefinedElement('tag');
-    });
-    return result.affected + ' Tags have been succesfully deleted';
+    const result = await this.formsRepository
+      .delete({ uuid: id })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('form');
+      });
+    return result.affected + ' Forms have been successfully deleted';
   }
 
   async deleteByProject(id: string) {
-    const result = await this.tagsRepository
+    const result = await this.formsRepository
       .delete({ projectId: id })
       .catch((e) => {
         console.error(e);
         throw this.throwUndefinedElement('project');
       });
-    return result.affected + ' Tags have been successfully deleted';
+    return result.affected + ' Forms have been successfully deleted';
   }
 
   async deleteByCategory(id: string) {
-    const result = await this.tagsRepository
+    const result = await this.formsRepository
       .delete({ categoryId: id })
       .catch((e) => {
         console.error(e);
         throw this.throwUndefinedElement('category');
       });
-    return result.affected + ' Tags have been succesfully deleted';
+    return result.affected + ' Forms have been successfully deleted';
   }
 }

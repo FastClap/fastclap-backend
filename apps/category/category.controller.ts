@@ -20,6 +20,11 @@ export class CategoryController {
     return this.categoryService.getAll();
   }
 
+  @Get('category/:id')
+  async getAllByProject(@Param('id') id: string) {
+    return this.categoryService.getAllByProject(id);
+  }
+
   @Get(':id')
   async getOne(@Param('id') id: string) {
     return this.categoryService.getOne(id);
@@ -41,5 +46,10 @@ export class CategoryController {
   @Delete(':id')
   async delete(@Param('id') id: string) {
     return this.categoryService.delete(id);
+  }
+
+  @Delete('project/:id')
+  async deleteByProject(@Param('id') id: string) {
+    return this.categoryService.deleteByProject(id);
   }
 }

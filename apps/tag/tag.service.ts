@@ -96,7 +96,7 @@ export class TagService {
         console.error(e);
         throw this.throwUndefinedElement('project');
       });
-    return result.affected + ' Tags have been succesfully deleted';
+    return result.affected + ' Tags have been successfully deleted';
   }
 
   async deleteByCategory(id: string) {

@@ -1,17 +1,17 @@
-import {IsString, IsNotEmpty, IsOptional} from 'class-validator';
+import {IsString, IsOptional} from 'class-validator';
 
 export class UpdateFormDto {
     @IsString()
-    @IsNotEmpty()
-    categoryId!: string;
+    @IsOptional()
+    categoryId?: string;
 
     @IsString()
-    @IsNotEmpty()
-    name!: string;
+    @IsOptional()
+    name?: string;
 
     @IsString()
-    @IsNotEmpty()
-    description!: string;
+    @IsOptional()
+    description?: string;
 
     @IsString()
     @IsOptional()

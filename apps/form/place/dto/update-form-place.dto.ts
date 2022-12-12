@@ -1,15 +1,15 @@
-import {IsString, IsNotEmpty} from 'class-validator';
+import {IsString, IsOptional} from 'class-validator';
 
 export class UpdateFormPlaceDto {
     @IsString()
-    @IsNotEmpty()
-    name!: string;
+    @IsOptional()
+    name?: string;
 
     @IsString()
-    @IsNotEmpty()
-    description!: string;
+    @IsOptional()
+    description?: string;
 
     @IsString()
-    @IsNotEmpty()
-    address!: string;
+    @IsOptional()
+    address?: string;
 }

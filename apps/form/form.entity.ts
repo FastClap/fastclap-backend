@@ -15,7 +15,7 @@ export class Form {
     name!: string;
 
     @Column()
-    description!: string;
+    description?: string;
 
     @Column()
     alias?: string;

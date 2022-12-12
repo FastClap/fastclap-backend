@@ -9,7 +9,7 @@ export class FormPlace {
     name!: string
 
     @Column()
-    description!: string
+    description?: string
 
     @Column()
     address!: string

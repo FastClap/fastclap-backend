@@ -10,7 +10,7 @@ export class CreateFormPlaceDto {
 
     @IsString()
     @IsNotEmpty()
-    description!: string;
+    description?: string;
 
     @IsString()
     @IsNotEmpty()

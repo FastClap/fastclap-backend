@@ -9,7 +9,7 @@ import {
 export class CreateTagDto {
   @IsString()
   @IsNotEmpty()
-  // @IsUUID()
+  @IsUUID()
   projectId!: string;
 
   @IsNumber()

@@ -5,6 +5,7 @@ import { Tag } from './tag.entity';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { CategoryService } from 'apps/category/category.service';
+import { ProjectService } from 'apps/project/project.service';
 
 @Injectable()
 export class TagService {
@@ -12,6 +13,7 @@ export class TagService {
     @InjectRepository(Tag)
     private tagsRepository: Repository<Tag>,
     private readonly categoriesService: CategoryService,
+    private readonly projectService: ProjectService,
   ) {}
 
   throwUndefinedElement(type: string): HttpException {
@@ -68,6 +70,10 @@ export class TagService {
     const categoryExist = await this.categoriesService.exist(body.categoryId);
     if (!categoryExist) {
       throw this.throwUndefinedElement('category');
+    }
+    const projectExist = await this.projectService.exist(body.projectId);
+    if (!projectExist) {
+      throw this.throwUndefinedElement('project');
     }
     const newTag = this.tagsRepository.create(body);
     return (await this.tagsRepository.save(newTag)).uuid;

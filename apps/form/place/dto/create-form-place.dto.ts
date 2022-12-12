@@ -1,18 +1,15 @@
-import {
-    IsString,
-    IsNotEmpty,
-} from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateFormPlaceDto {
-    @IsString()
-    @IsNotEmpty()
-    name!: string;
+  @IsString()
+  @IsNotEmpty()
+  name!: string;
 
-    @IsString()
-    @IsNotEmpty()
-    description?: string;
+  @IsString()
+  @IsNotEmpty()
+  description?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    address!: string;
+  @IsString()
+  @IsNotEmpty()
+  address!: string;
 }

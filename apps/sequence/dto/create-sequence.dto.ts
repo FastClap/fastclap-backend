@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsUUID, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateSequenceDto {
   @IsString()
@@ -8,9 +8,4 @@ export class CreateSequenceDto {
   @IsString()
   @IsOptional()
   description?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @IsUUID()
-  projectId!: string;
 }

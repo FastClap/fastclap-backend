@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsHexColor } from 'class-validator';
 
 export class CreateCategoryDto {
   @IsString()
@@ -9,10 +9,7 @@ export class CreateCategoryDto {
   @IsOptional()
   description?: string;
 
-  // TODO - Insert color string DTO
-
-  @IsString()
+  @IsHexColor()
   @IsNotEmpty()
-  @IsUUID()
-  projectId!: string;
+  color!: string;
 }

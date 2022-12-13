@@ -20,7 +20,8 @@ export class Category {
   @Column()
   projectId!: string;
 
-  // TODO - Insert color string
+  @Column()
+  color!: string;
 
   @CreateDateColumn({
     type: 'timestamp',

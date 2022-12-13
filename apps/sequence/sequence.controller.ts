@@ -11,6 +11,7 @@ import { SequenceService } from './sequence.service';
 import { CreateSequenceDto } from './dto/create-sequence.dto';
 import { UpdateSequenceDto } from './dto/update-sequence.dto';
 import { Sequence } from './sequence.entity';
+import { Tag } from 'apps/tag/tag.entity';
 
 @Controller('project/:projectId/sequence')
 export class SequenceController {
@@ -37,7 +38,13 @@ export class SequenceController {
     return this.sequenceService.findOne(projectId, sequenceId);
   }
 
-  // TODO - tag route for sequence
+  @Get(':sequenceId/tag')
+  async findTags(
+    @Param('projectId') projectId: string,
+    @Param('sequenceId') sequenceId: string,
+  ): Promise<Tag[]> {
+    return this.sequenceService.findTags(projectId, sequenceId);
+  }
 
   @Patch(':sequenceId')
   async update(

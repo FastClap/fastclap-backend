@@ -6,14 +6,18 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { CategoryService } from 'apps/category/category.service';
 import { ProjectService } from 'apps/project/project.service';
+import { SequenceService } from 'apps/sequence/sequence.service';
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class TagService {
   constructor(
+    private moduleRef: ModuleRef,
     @InjectRepository(Tag)
     private tagsRepository: Repository<Tag>,
-    private readonly categoriesService: CategoryService,
     private readonly projectService: ProjectService,
+    private readonly categoryService: CategoryService,
+    private readonly sequenceService: SequenceService,
   ) {}
 
   throwUndefinedElement(type: string): HttpException {
@@ -27,19 +31,19 @@ export class TagService {
   }
 
   async create(projectId: string, createTagDto: CreateTagDto): Promise<string> {
-    const project = await this.projectService.exist(projectId);
+    const project: boolean = await this.projectService.exist(projectId);
     if (!project) {
       throw this.throwUndefinedElement('project');
     }
 
-    const category = await this.categoriesService.exist(
+    const category: boolean = await this.categoryService.exist(
       createTagDto.categoryId,
     );
     if (!category) {
       throw this.throwUndefinedElement('category');
     }
 
-    const sequence = await this.categoriesService.exist(
+    const sequence: boolean = await this.sequenceService.exist(
       createTagDto.sequenceId,
     );
     if (!sequence) {
@@ -52,7 +56,7 @@ export class TagService {
 
   async findOne(projectId: string, tagId: string): Promise<Tag> {
     return await this.tagsRepository
-      .findOneByOrFail({ uuid: tagId })
+      .findOneByOrFail({ uuid: tagId, projectId: projectId })
       .catch((e) => {
         console.error(e);
         throw this.throwUndefinedElement('tag');
@@ -74,7 +78,7 @@ export class TagService {
       .delete({ uuid: tagId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('category');
+        throw this.throwUndefinedElement('tag');
       });
     return result.affected + ' tag has been successfully deleted';
   }

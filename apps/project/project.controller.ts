@@ -16,7 +16,6 @@ import { Project } from './project.entity';
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  // TODO - Use types to pass the DTO to the service and get an Entity
   @Post()
   async create(@Body() createProjectDto: CreateProjectDto): Promise<string> {
     return this.projectService.create(createProjectDto);

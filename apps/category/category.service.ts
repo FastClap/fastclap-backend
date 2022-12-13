@@ -1,16 +1,21 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectService } from 'apps/project/project.service';
+import { Tag } from 'apps/tag/tag.entity';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class CategoryService {
   constructor(
+    private moduleRef: ModuleRef,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+    @InjectRepository(Tag)
+    private tagRepository: Repository<Tag>,
     private readonly projectService: ProjectService,
   ) {}
 
@@ -24,13 +29,16 @@ export class CategoryService {
     );
   }
 
-  async create(projectId: string, body: CreateCategoryDto): Promise<string> {
-    const project = await this.projectService.exist(projectId);
+  async create(
+    projectId: string,
+    createCategoryDto: CreateCategoryDto,
+  ): Promise<string> {
+    const project: boolean = await this.projectService.exist(projectId);
     if (!project) {
       throw this.throwUndefinedElement('project');
     }
     const category: Category = this.categoryRepository.create({
-      ...body,
+      ...createCategoryDto,
       projectId: projectId,
     });
     return (await this.categoryRepository.save(category)).uuid;
@@ -58,13 +66,22 @@ export class CategoryService {
       });
   }
 
+  async findTags(projectId: string, categoryId: string): Promise<Tag[]> {
+    return this.tagRepository
+      .findBy({ projectId: projectId, categoryId: categoryId })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('project or category');
+      });
+  }
+
   async update(
     projectId: string,
     categoryId: string,
-    body: UpdateCategoryDto,
+    updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category> {
     this.categoryRepository
-      .update({ uuid: categoryId, projectId: projectId }, body)
+      .update({ uuid: categoryId, projectId: projectId }, updateCategoryDto)
       .catch((e) => {
         console.error(e);
         throw this.throwUndefinedElement('category');

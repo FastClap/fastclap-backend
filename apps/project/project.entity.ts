@@ -20,6 +20,8 @@ export class Project {
   // @Column()
   // userId!: string;
 
+  // TODO - Put scenario file here + metadata + scenarioContent
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP()',

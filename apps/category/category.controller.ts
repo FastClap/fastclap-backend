@@ -11,6 +11,7 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './category.entity';
+import { Tag } from '../tag/tag.entity';
 
 @Controller('project/:projectId/category')
 export class CategoryController {
@@ -37,7 +38,13 @@ export class CategoryController {
     return this.categoryService.findOne(projectId, categoryId);
   }
 
-  // TODO - tag route for category
+  @Get(':categoryId/tag')
+  async findTags(
+    @Param('projectId') projectId: string,
+    @Param('categoryId') categoryId: string,
+  ): Promise<Tag[]> {
+    return this.categoryService.findTags(projectId, categoryId);
+  }
 
   @Patch(':categoryId')
   async update(

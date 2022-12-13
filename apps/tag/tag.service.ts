@@ -7,12 +7,10 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { CategoryService } from 'apps/category/category.service';
 import { ProjectService } from 'apps/project/project.service';
 import { SequenceService } from 'apps/sequence/sequence.service';
-import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class TagService {
   constructor(
-    private moduleRef: ModuleRef,
     @InjectRepository(Tag)
     private tagsRepository: Repository<Tag>,
     private readonly projectService: ProjectService,

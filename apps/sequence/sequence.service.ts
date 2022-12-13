@@ -6,12 +6,10 @@ import { Tag } from 'apps/tag/tag.entity';
 import { CreateSequenceDto } from './dto/create-sequence.dto';
 import { UpdateSequenceDto } from './dto/update-sequence.dto';
 import { ProjectService } from 'apps/project/project.service';
-import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class SequenceService {
   constructor(
-    private moduleRef: ModuleRef,
     @InjectRepository(Sequence)
     private sequenceRepository: Repository<Sequence>,
     @InjectRepository(Tag)
@@ -75,7 +73,6 @@ export class SequenceService {
         throw this.throwUndefinedElement('sequence');
       });
     console.log('sequence object :\n', sequence);
-
 
     const tag: Tag[] = await this.tagRepository
       .findBy({ projectId: projectId, sequenceId: sequenceId })

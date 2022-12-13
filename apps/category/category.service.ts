@@ -6,12 +6,10 @@ import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class CategoryService {
   constructor(
-    private moduleRef: ModuleRef,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
     @InjectRepository(Tag)

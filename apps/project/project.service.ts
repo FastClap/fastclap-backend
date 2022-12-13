@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import * as path from 'path';
-import { loadFile } from "./project.utils";
+import { loadFile } from './project.utils';
 
 @Injectable()
 export class ProjectService {
@@ -24,10 +24,14 @@ export class ProjectService {
     );
   }
 
-  async create(body: CreateProjectDto, file: Express.Multer.File): Promise<string> {
-
+  async create(
+    body: CreateProjectDto,
+    file: Express.Multer.File,
+  ): Promise<string> {
     let file_path = path.resolve(process.cwd());
-    let file_content = await loadFile(path.join(file_path, "files/", file.filename));
+    let file_content = await loadFile(
+      path.join(file_path, 'files/', file.filename),
+    );
 
     const project: Project = await this.projectRepository.create({
       ...body,

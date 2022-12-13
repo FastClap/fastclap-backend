@@ -17,8 +17,10 @@ export class Project {
   @Column({ nullable: true })
   description?: string;
 
-  // @Column()
-  // userId!: string;
+  @Column(
+      {nullable: true}
+  )
+  html?: string;
 
   // TODO - Put scenario file here + metadata + scenarioContent
 

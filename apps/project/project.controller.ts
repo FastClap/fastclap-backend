@@ -6,19 +6,34 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './project.entity';
+import { FileInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import { fileManager, uploadFileFilter } from "./project.utils";
 
 @Controller('project')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
-  async create(@Body() createProjectDto: CreateProjectDto): Promise<string> {
-    return this.projectService.create(createProjectDto);
+  @UseInterceptors(
+      FileInterceptor('pdf', {
+        storage: diskStorage({
+          destination: '/home/node/app/files',
+          filename: fileManager.customFileName
+        }),
+        fileFilter: uploadFileFilter
+      })
+  )
+  async create(@Body() body: CreateProjectDto, @UploadedFile() file: Express.Multer.File): Promise<string> {
+    // TODO - Use types to pass the DTO to the service and get an Entity
+    return this.projectService.create(body, file);
   }
 
   @Get()

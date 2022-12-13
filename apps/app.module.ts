@@ -4,8 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProjectModule } from './project/project.module';
-import { MulterModule } from '@nestjs/platform-express';
-
+import { FileUploadModule } from "./file/file.upload.module";
 import { CategoryModule } from './category/category.module';
 import { SequenceModule } from './sequence/sequence.module';
 import { TagModule } from './tag/tag.module';
@@ -32,9 +31,7 @@ import { TagModule } from './tag/tag.module';
     TagModule,
     ProjectModule,
     SequenceModule,
-    MulterModule.register({
-      dest: './files',
-    }),
+    FileUploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -13,9 +13,5 @@ export class CreateTagDto {
 
   @IsString()
   @IsNotEmpty()
-  metadata!: string;
-
-  @IsString()
-  @IsNotEmpty()
   content!: string;
 }

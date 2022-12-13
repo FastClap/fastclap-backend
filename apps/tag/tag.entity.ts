@@ -21,9 +21,6 @@ export class Tag {
   sequenceId!: string;
 
   @Column()
-  metadata!: string;
-
-  @Column()
   content!: string;
 
   @CreateDateColumn({

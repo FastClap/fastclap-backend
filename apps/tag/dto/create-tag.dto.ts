@@ -4,16 +4,17 @@ export class CreateTagDto {
   @IsString()
   @IsNotEmpty()
   @IsUUID()
+  uuid!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsUUID()
   categoryId!: string;
 
   @IsString()
   @IsNotEmpty()
   @IsUUID()
   sequenceId!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  metadata!: string;
 
   @IsString()
   @IsNotEmpty()

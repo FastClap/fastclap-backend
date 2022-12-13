@@ -83,4 +83,24 @@ export class TagService {
       });
     return result.affected + ' tag has been successfully deleted';
   }
+
+  // async deleteByProject(projectId: string) {
+  //   const result = await this.tagsRepository
+  //     .delete({ projectId: projectId })
+  //     .catch((e) => {
+  //       console.error(e);
+  //       throw this.throwUndefinedElement('project');
+  //     });
+  //   return result.affected + ' tag have been successfully deleted';
+  // }
+
+  // async deleteByCategory(categoryId: string) {
+  //   const result = await this.tagsRepository
+  //     .delete({ categoryId: categoryId })
+  //     .catch((e) => {
+  //       console.error(e);
+  //       throw this.throwUndefinedElement('category');
+  //     });
+  //   return result.affected + ' tag have been successfully deleted';
+  // }
 }

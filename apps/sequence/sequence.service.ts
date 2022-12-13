@@ -111,4 +111,14 @@ export class SequenceService {
       });
     return result.affected + ' sequence has been successfully deleted';
   }
+
+  // async deleteByProject(projectId: string) {
+  //   const result = await this.sequenceRepository
+  //     .delete({ projectId: projectId })
+  //     .catch((e) => {
+  //       console.error(e);
+  //       throw this.throwUndefinedElement('project');
+  //     });
+  //   return result.affected + ' sequence have been successfully deleted';
+  // }
 }

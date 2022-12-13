@@ -111,4 +111,14 @@ export class CategoryService {
       });
     return result.affected + ' category has been successfully deleted';
   }
+
+  async deleteByProject(projectId: string) {
+    const result = await this.categoryRepository
+      .delete({ projectId: projectId })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('project');
+      });
+    return result.affected + ' category have been successfully deleted';
+  }
 }

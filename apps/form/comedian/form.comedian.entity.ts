@@ -2,18 +2,18 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity({ name: 'comedian-form' })
 export class FormComedian {
-    @PrimaryGeneratedColumn('uuid')
-    uuid!: string;
+  @PrimaryGeneratedColumn('uuid')
+  uuid!: string;
 
-    @Column()
-    firstname!: string;
+  @Column()
+  firstname!: string;
 
-    @Column()
-    lastname!: string;
+  @Column()
+  lastname!: string;
 
-    @Column()
-    age!: number;
+  @Column()
+  age!: number;
 
-    @Column()
-    address!: string;
+  @Column()
+  address!: string;
 }

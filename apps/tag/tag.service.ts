@@ -6,112 +6,101 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { CategoryService } from 'apps/category/category.service';
 import { ProjectService } from 'apps/project/project.service';
+import { SequenceService } from 'apps/sequence/sequence.service';
 
 @Injectable()
 export class TagService {
   constructor(
     @InjectRepository(Tag)
     private tagsRepository: Repository<Tag>,
-    private readonly categoriesService: CategoryService,
     private readonly projectService: ProjectService,
+    private readonly categoryService: CategoryService,
+    private readonly sequenceService: SequenceService,
   ) {}
 
   throwUndefinedElement(type: string): HttpException {
     return new HttpException(
       {
         status: HttpStatus.NOT_FOUND,
-        error: 'Undefined ' + type,
+        error: type + ' not found.',
       },
       HttpStatus.NOT_FOUND,
     );
   }
 
-  getAll(): Promise<Tag[]> {
-    return this.tagsRepository.find();
-  }
-
-  async getAllByProject(id: string): Promise<Tag[]> {
-    const res = await this.tagsRepository
-      .findBy({ projectId: id })
-      .catch((e) => {
-        console.error(e);
-        throw this.throwUndefinedElement('project');
-      });
-    if (!res) {
+  async create(projectId: string, createTagDto: CreateTagDto): Promise<string> {
+    const project: boolean = await this.projectService.exist(projectId);
+    if (!project) {
       throw this.throwUndefinedElement('project');
     }
-    return res;
-  }
 
-  async getAllByCategory(id: string): Promise<Tag[]> {
-    const res = await this.tagsRepository
-      .findBy({ categoryId: id })
-      .catch((e) => {
-        console.error(e);
-        throw this.throwUndefinedElement('category');
-      });
-    if (!res) {
+    const category: boolean = await this.categoryService.exist(
+      createTagDto.categoryId,
+    );
+    if (!category) {
       throw this.throwUndefinedElement('category');
     }
-    return res;
+
+    const sequence: boolean = await this.sequenceService.exist(
+      createTagDto.sequenceId,
+    );
+    if (!sequence) {
+      throw this.throwUndefinedElement('sequence');
+    }
+
+    const tag: Tag = this.tagsRepository.create({
+      ...createTagDto,
+      projectId: projectId,
+    });
+    return (await this.tagsRepository.save(tag)).uuid;
   }
 
-  async getOne(id: string): Promise<Tag> {
-    const res = await this.tagsRepository
-      .findOneByOrFail({ uuid: id })
+  async findOne(projectId: string, tagId: string): Promise<Tag> {
+    return await this.tagsRepository
+      .findOneByOrFail({ uuid: tagId, projectId: projectId })
       .catch((e) => {
         console.error(e);
         throw this.throwUndefinedElement('tag');
       });
-    return res;
   }
 
-  async create(body: CreateTagDto): Promise<string> {
-    const categoryExist = await this.categoriesService.exist(body.categoryId);
-    if (!categoryExist) {
-      throw this.throwUndefinedElement('category');
-    }
-    const projectExist = await this.projectService.exist(body.projectId);
-    if (!projectExist) {
-      throw this.throwUndefinedElement('project');
-    }
-    const newTag = this.tagsRepository.create(body);
-    return (await this.tagsRepository.save(newTag)).uuid;
-  }
-
-  update(id: string, body: UpdateTagDto) {
-    this.tagsRepository.update({ uuid: id }, body).catch((e) => {
-      console.error(e);
-      throw this.throwUndefinedElement('tag');
-    });
-    return body;
-  }
-
-  async delete(id: string) {
-    const result = await this.tagsRepository.delete({ uuid: id }).catch((e) => {
-      console.error(e);
-      throw this.throwUndefinedElement('tag');
-    });
-    return result.affected + ' Tags have been succesfully deleted';
-  }
-
-  async deleteByProject(id: string) {
-    const result = await this.tagsRepository
-      .delete({ projectId: id })
+  async update(projectId: string, tagId: string, updateTagDto: UpdateTagDto) {
+    this.tagsRepository
+      .update({ uuid: tagId, projectId: projectId }, updateTagDto)
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project');
+        throw this.throwUndefinedElement('tag');
       });
-    return result.affected + ' Tags have been successfully deleted';
+    return this.findOne(projectId, tagId);
   }
 
-  async deleteByCategory(id: string) {
+  async delete(projectId: string, tagId: string) {
     const result = await this.tagsRepository
-      .delete({ categoryId: id })
+      .delete({ uuid: tagId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('category');
+        throw this.throwUndefinedElement('tag');
       });
-    return result.affected + ' Tags have been succesfully deleted';
+    return result.affected + ' tag has been successfully deleted';
   }
+
+  // async deleteByProject(projectId: string) {
+  //   const result = await this.tagsRepository
+  //     .delete({ projectId: projectId })
+  //     .catch((e) => {
+  //       console.error(e);
+  //       throw this.throwUndefinedElement('project');
+  //     });
+  //   return result.affected + ' tag have been successfully deleted';
+  // }
+
+  // async deleteByCategory(categoryId: string) {
+  //   const result = await this.tagsRepository
+  //     .delete({ categoryId: categoryId })
+  //     .catch((e) => {
+  //       console.error(e);
+  //       throw this.throwUndefinedElement('category');
+  //     });
+  //   return result.affected + ' tag have been successfully deleted';
+  // }
 }

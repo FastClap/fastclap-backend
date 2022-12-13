@@ -5,8 +5,8 @@ import { FormComedian } from './form.comedian.entity';
 import { FormComedianService } from './form.comedian.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([FormComedian])],
-    providers: [FormComedianService],
-    controllers: [FormComedianController],
+  imports: [TypeOrmModule.forFeature([FormComedian])],
+  providers: [FormComedianService],
+  controllers: [FormComedianController],
 })
 export class FormComedianModule {}

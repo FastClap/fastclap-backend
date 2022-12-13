@@ -1,23 +1,19 @@
-import {
-    IsString,
-    IsNotEmpty,
-    IsNumber,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateFormComedianDto {
-    @IsString()
-    @IsNotEmpty()
-    firstname!: string;
+  @IsString()
+  @IsNotEmpty()
+  firstname!: string;
 
-    @IsString()
-    @IsNotEmpty()
-    lastname!: string;
+  @IsString()
+  @IsNotEmpty()
+  lastname!: string;
 
-    @IsNumber()
-    @IsNotEmpty()
-    age!: number;
+  @IsNumber()
+  @IsNotEmpty()
+  age!: number;
 
-    @IsString()
-    @IsNotEmpty()
-    address!: string;
+  @IsString()
+  @IsNotEmpty()
+  address!: string;
 }

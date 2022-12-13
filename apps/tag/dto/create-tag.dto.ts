@@ -1,29 +1,19 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsUUID,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateTagDto {
   @IsString()
   @IsNotEmpty()
   @IsUUID()
-  projectId!: string;
-
-  @IsNumber()
-  @IsOptional()
-  position?: number = 0;
-
-  @IsNumber()
-  @IsOptional()
-  length?: number = 3;
+  categoryId!: string;
 
   @IsString()
   @IsNotEmpty()
   @IsUUID()
-  categoryId!: string;
+  sequenceId!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  metadata!: string;
 
   @IsString()
   @IsNotEmpty()

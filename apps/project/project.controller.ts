@@ -5,25 +5,21 @@ import {
   Get,
   Param,
   Patch,
-  Post, UploadedFile, UseInterceptors,
+  Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './project.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import {FileInterceptor} from "@nestjs/platform-express";
-import {diskStorage} from "multer";
-import {fileManager, uploadFileFilter} from "./project.utils";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import { fileManager, uploadFileFilter } from "./project.utils";
 
 @Controller('project')
 export class ProjectController {
-  constructor(
-    private readonly projectService: ProjectService,
-    @InjectRepository(Project)
-    private readonly projectRepository: Repository<Project>,
-  ) {}
+  constructor(private readonly projectService: ProjectService) {}
 
   @Post()
   @UseInterceptors(
@@ -35,49 +31,32 @@ export class ProjectController {
         fileFilter: uploadFileFilter
       })
   )
-  async create(@Body() body: CreateProjectDto, @UploadedFile() file: Express.Multer.File): Promise<Project> {
+  async create(@Body() body: CreateProjectDto, @UploadedFile() file: Express.Multer.File): Promise<string> {
     // TODO - Use types to pass the DTO to the service and get an Entity
     return this.projectService.create(body, file);
   }
 
   @Get()
-  async find(): Promise<Project[]> {
-    return this.projectService.find();
+  async findAll(): Promise<Project[]> {
+    return this.projectService.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Project | null> {
-    return this.projectService.findOne(id);
+  @Get(':projectId')
+  async findOne(@Param('projectId') projectId: string): Promise<Project> {
+    return this.projectService.findOne(projectId);
   }
 
   // TODO - Create UUID DTO
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() body: UpdateProjectDto) {
-    return this.projectService.update(id, body);
+  @Patch(':projectId')
+  async update(
+    @Param('projectId') projectId: string,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ): Promise<Project> {
+    return this.projectService.update(projectId, updateProjectDto);
   }
 
-  // @Post('/:id/script/upload')
-  // @UseInterceptors(
-  //     FileInterceptor('pdf', {
-  //       storage: diskStorage({
-  //         destination: '/home/node/app/files',
-  //         filename: fileManager.customFileName
-  //       }),
-  //       fileFilter: uploadFileFilter
-  //     })
-  // )
-  // async uploadMyFile(@UploadedFile() file: any) {
-  //
-  //   let filepath = path.resolve(process.cwd());
-  //   let file_content = await this.projectService.loadFile(path.join(filepath, "files/", file.filename));
-  //
-  //   return {
-  //     content: file_content,
-  //   };
-  // }
-
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.projectService.delete(id);
+  @Delete(':projectId')
+  async delete(@Param('projectId') projectId: string): Promise<string> {
+    return this.projectService.delete(projectId);
   }
 }

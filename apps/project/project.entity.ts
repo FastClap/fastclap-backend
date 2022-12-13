@@ -17,12 +17,10 @@ export class Project {
   @Column({ nullable: true })
   description?: string;
 
-  @Column(
-      {nullable: true}
-  )
+  @Column({ nullable: true })
   html?: string;
 
-  // TODO - Put scenario file here + metadata + scenarioContent
+  // TODO - Put highlighted metadata
 
   @CreateDateColumn({
     type: 'timestamp',

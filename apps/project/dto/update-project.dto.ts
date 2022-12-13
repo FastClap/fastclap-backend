@@ -1,11 +1,6 @@
-import { IsOptional, IsString } from 'class-validator';
+import { PartialType, PickType } from '@nestjs/swagger';
+import { CreateProjectDto } from './create-project.dto';
 
-export class UpdateProjectDto {
-  @IsString()
-  @IsOptional()
-  name?: string;
-
-  @IsString()
-  @IsOptional()
-  description?: string;
-}
+export class UpdateProjectDto extends PartialType(
+  PickType(CreateProjectDto, ['name', 'description']),
+) {}

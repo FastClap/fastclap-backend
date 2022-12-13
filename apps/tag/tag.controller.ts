@@ -10,53 +10,42 @@ import {
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { Tag } from './tag.entity';
 
-@Controller('tag')
+@Controller('project/:projectId/tag')
 export class TagController {
   constructor(private readonly tagService: TagService) {}
 
-  @Get()
-  async getAll() {
-    return this.tagService.getAll();
-  }
-
-  @Get('project/:id')
-  async getAllByProject(@Param('id') id: string) {
-    return this.tagService.getAllByProject(id);
-  }
-
-  @Get('category/:id')
-  async getAllByCategory(@Param('id') id: string) {
-    return this.tagService.getAllByCategory(id);
-  }
-
-  @Get(':id')
-  async getOne(@Param('id') id: string) {
-    return this.tagService.getOne(id);
-  }
-
   @Post()
-  async create(@Body() createTagDto: CreateTagDto) {
-    return this.tagService.create(createTagDto);
+  async create(
+    @Param('projectId') projectId: string,
+    @Body() createTagDto: CreateTagDto,
+  ): Promise<string> {
+    return this.tagService.create(projectId, createTagDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
-    return this.tagService.update(id, updateTagDto);
+  @Get(':tagId')
+  async findOne(
+    @Param('projectId') projectId: string,
+    @Param('tagId') tagId: string,
+  ): Promise<Tag> {
+    return this.tagService.findOne(projectId, tagId);
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.tagService.delete(id);
+  @Patch(':tagId')
+  async update(
+    @Param('projectId') projectId: string,
+    @Param('tagId') tagId: string,
+    @Body() updateTagDto: UpdateTagDto,
+  ): Promise<Tag> {
+    return this.tagService.update(projectId, tagId, updateTagDto);
   }
 
-  @Delete('project/:id')
-  async deleteByProject(@Param('id') id: string) {
-    return this.tagService.deleteByProject(id);
-  }
-
-  @Delete('category/:id')
-  async deleteByCategory(@Param('id') id: string) {
-    return this.tagService.deleteByCategory(id);
+  @Delete(':tagId')
+  async delete(
+    @Param('projectId') projectId: string,
+    @Param('tagId') tagId: string,
+  ): Promise<string> {
+    return this.tagService.delete(projectId, tagId);
   }
 }

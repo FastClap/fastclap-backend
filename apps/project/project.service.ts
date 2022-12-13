@@ -22,18 +22,18 @@ export class ProjectService {
     );
   }
 
-  async create(body: CreateProjectDto): Promise<Project> {
+  async create(body: CreateProjectDto): Promise<string> {
     const project: Project = await this.projectRepository.create(body);
-    return this.projectRepository.save(project);
+    return (await this.projectRepository.save(project)).uuid;
   }
 
-  async find(): Promise<Project[]> {
+  async findAll(): Promise<Project[]> {
     return this.projectRepository.find();
   }
 
-  async findOne(id: string): Promise<Project> {
+  async findOne(projectId: string): Promise<Project> {
     const res = this.projectRepository
-      .findOneByOrFail({ uuid: id })
+      .findOneByOrFail({ uuid: projectId })
       .catch((e) => {
         console.error(e);
         throw this.throwUndefinedElement('project');
@@ -44,28 +44,25 @@ export class ProjectService {
     return res;
   }
 
-  async exist(id: string): Promise<boolean> {
-    return this.projectRepository.exist({ where: { uuid: id } });
+  async exist(projectId: string): Promise<boolean> {
+    return this.projectRepository.exist({ where: { uuid: projectId } });
   }
 
-  // TODO - Find a way to make the update projectService function returns a Promise<Project>
-  async update(id: string, body: UpdateProjectDto) {
-    this.projectRepository.update({ uuid: id }, body)
-    .catch((e) => {
+  async update(projectId: string, body: UpdateProjectDto): Promise<Project> {
+    this.projectRepository.update({ uuid: projectId }, body).catch((e) => {
       console.error(e);
       throw this.throwUndefinedElement('project');
     });
-    // TODO - This is wrong because it returns the unmodified body
-    return body;
+    return this.findOne(projectId);
   }
 
-  async delete(id: string) {
+  async delete(projectId: string): Promise<string> {
     const result = await this.projectRepository
-      .delete({ uuid: id })
+      .delete({ uuid: projectId })
       .catch((e) => {
         console.error(e);
         throw this.throwUndefinedElement('project');
       });
-    return result.affected + ' Projects have been successfully deleted';
+    return result.affected + ' project has been successfully deleted';
   }
 }

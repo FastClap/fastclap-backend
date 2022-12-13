@@ -1,7 +1,6 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { PartialType, PickType } from '@nestjs/swagger';
+import { CreateCategoryDto } from './create-category.dto';
 
-export class UpdateCategoryDto {
-  @IsString()
-  @IsNotEmpty()
-  name!: string;
-}
+export class UpdateCategoryDto extends PartialType(
+  PickType(CreateCategoryDto, ['name', 'color'] as const),
+) {}

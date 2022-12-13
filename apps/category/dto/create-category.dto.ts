@@ -1,12 +1,11 @@
-import { IsString, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty, IsHexColor } from 'class-validator';
 
 export class CreateCategoryDto {
   @IsString()
   @IsNotEmpty()
   name!: string;
 
-  @IsString()
+  @IsHexColor()
   @IsNotEmpty()
-  @IsUUID()
-  projectId!: string;
+  color!: string;
 }

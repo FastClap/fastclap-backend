@@ -34,15 +34,7 @@ export class CategoryController {
   async findOne(
     @Param('projectId') projectId: string,
     @Param('categoryId') categoryId: string,
-  ): Promise<Category> {
-    return this.categoryService.findOne(projectId, categoryId);
-  }
-
-  @Get(':categoryId/tag')
-  async findTags(
-    @Param('projectId') projectId: string,
-    @Param('categoryId') categoryId: string,
-  ): Promise<Tag[]> {
+  ) {
     return this.categoryService.findTags(projectId, categoryId);
   }
 

@@ -50,7 +50,10 @@ export class TagService {
       throw this.throwUndefinedElement('sequence');
     }
 
-    const tag: Tag = this.tagsRepository.create(createTagDto);
+    const tag: Tag = this.tagsRepository.create({
+      ...createTagDto,
+      projectId: projectId,
+    });
     return (await this.tagsRepository.save(tag)).uuid;
   }
 

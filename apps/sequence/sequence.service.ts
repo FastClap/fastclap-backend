@@ -66,13 +66,29 @@ export class SequenceService {
       });
   }
 
-  async findTags(projectId: string, sequenceId: string): Promise<Tag[]> {
-    return this.tagRepository
+  async findTags(projectId: string, sequenceId: string) {
+    console.log('===== SEQUENCE =====');
+    const sequence: Sequence = await this.sequenceRepository
+      .findOneByOrFail({ uuid: sequenceId, projectId: projectId })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('sequence');
+      });
+    console.log('sequence object :\n', sequence);
+
+
+    const tag: Tag[] = await this.tagRepository
       .findBy({ projectId: projectId, sequenceId: sequenceId })
       .catch((e) => {
         console.error(e);
         throw this.throwUndefinedElement('project or sequence');
       });
+    console.log('tag object :\n', tag);
+
+    return {
+      ...sequence,
+      ...tag,
+    };
   }
 
   async update(

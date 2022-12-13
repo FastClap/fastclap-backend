@@ -66,13 +66,28 @@ export class CategoryService {
       });
   }
 
-  async findTags(projectId: string, categoryId: string): Promise<Tag[]> {
-    return this.tagRepository
+  async findTags(projectId: string, categoryId: string) {
+    console.log('===== CATEGORY =====');
+    const category: Category = await this.categoryRepository
+      .findOneByOrFail({ uuid: categoryId, projectId: projectId })
+      .catch((e) => {
+        console.error(e);
+        throw this.throwUndefinedElement('sequence');
+      });
+    console.log('category object :\n', category);
+
+    const tag: Tag[] = await this.tagRepository
       .findBy({ projectId: projectId, categoryId: categoryId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project or category');
+        throw this.throwUndefinedElement('project or sequence');
       });
+    console.log('tag object :\n', tag);
+
+    return {
+      ...category,
+      ...tag,
+    };
   }
 
   async update(

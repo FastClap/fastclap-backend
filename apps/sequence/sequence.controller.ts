@@ -34,15 +34,7 @@ export class SequenceController {
   async findOne(
     @Param('projectId') projectId: string,
     @Param('sequenceId') sequenceId: string,
-  ): Promise<Sequence> {
-    return this.sequenceService.findOne(projectId, sequenceId);
-  }
-
-  @Get(':sequenceId/tag')
-  async findTags(
-    @Param('projectId') projectId: string,
-    @Param('sequenceId') sequenceId: string,
-  ): Promise<Tag[]> {
+  ) {
     return this.sequenceService.findTags(projectId, sequenceId);
   }
 

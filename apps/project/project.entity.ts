@@ -17,8 +17,10 @@ export class Project {
   @Column()
   description?: string;
 
-  // @Column()
-  // userId!: string;
+  @Column(
+      {nullable: true}
+  )
+  html?: string;
 
   @CreateDateColumn({
     type: 'timestamp',

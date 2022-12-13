@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Patch,
-  Post,
+  Post, UploadedFile, UseInterceptors,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -13,6 +13,9 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import {FileInterceptor} from "@nestjs/platform-express";
+import {diskStorage} from "multer";
+import {fileManager, uploadFileFilter} from "./project.utils";
 
 @Controller('project')
 export class ProjectController {
@@ -23,9 +26,18 @@ export class ProjectController {
   ) {}
 
   @Post()
-  async create(@Body() body: CreateProjectDto): Promise<Project> {
+  @UseInterceptors(
+      FileInterceptor('pdf', {
+        storage: diskStorage({
+          destination: '/home/node/app/files',
+          filename: fileManager.customFileName
+        }),
+        fileFilter: uploadFileFilter
+      })
+  )
+  async create(@Body() body: CreateProjectDto, @UploadedFile() file: Express.Multer.File): Promise<Project> {
     // TODO - Use types to pass the DTO to the service and get an Entity
-    return this.projectService.create(body);
+    return this.projectService.create(body, file);
   }
 
   @Get()
@@ -43,6 +55,26 @@ export class ProjectController {
   async update(@Param('id') id: string, @Body() body: UpdateProjectDto) {
     return this.projectService.update(id, body);
   }
+
+  // @Post('/:id/script/upload')
+  // @UseInterceptors(
+  //     FileInterceptor('pdf', {
+  //       storage: diskStorage({
+  //         destination: '/home/node/app/files',
+  //         filename: fileManager.customFileName
+  //       }),
+  //       fileFilter: uploadFileFilter
+  //     })
+  // )
+  // async uploadMyFile(@UploadedFile() file: any) {
+  //
+  //   let filepath = path.resolve(process.cwd());
+  //   let file_content = await this.projectService.loadFile(path.join(filepath, "files/", file.filename));
+  //
+  //   return {
+  //     content: file_content,
+  //   };
+  // }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {

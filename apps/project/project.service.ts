@@ -13,18 +13,10 @@ export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
-  ) {}
+  ) { }
 
-  async create(body: CreateProjectDto, file: Express.Multer.File): Promise<string> {
-
-    let file_path = path.resolve(process.cwd());
-    let file_content = await loadFile(path.join(file_path, "files/", file.filename));
-
-    const project: Project = await this.projectRepository.create({
-      ...body,
-      html: file_content,
-    });
-
+  async create(body: CreateProjectDto): Promise<string> {
+    const project: Project = await this.projectRepository.create(body);
     return (await this.projectRepository.save(project)).uuid;
   }
 
@@ -54,6 +46,24 @@ export class ProjectService {
       console.error(e);
       throw NotFoundException('project');
     });
+    return this.findOne(projectId);
+  }
+
+  async updateUpload(
+    projectId: string,
+    file: Express.Multer.File,
+  ): Promise<Project> {
+    const file_path = path.resolve(process.cwd());
+    const file_content = await loadFile(
+      path.join(file_path, 'files/', file.filename),
+    );
+
+    this.projectRepository
+      .update({ uuid: projectId }, { html: file_content })
+      .catch((e) => {
+        console.error(e);
+        throw NotFoundException('project');
+      });
     return this.findOne(projectId);
   }
 

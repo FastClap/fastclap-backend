@@ -7,6 +7,7 @@ import { CreateSequenceDto } from './dto/create-sequence.dto';
 import { UpdateSequenceDto } from './dto/update-sequence.dto';
 import { ProjectService } from 'apps/project/project.service';
 import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
+import { CategoryService } from 'apps/category/category.service';
 
 @Injectable()
 export class SequenceService {
@@ -16,6 +17,7 @@ export class SequenceService {
     @InjectRepository(Tag)
     private tagRepository: Repository<Tag>,
     private readonly projectService: ProjectService,
+    private readonly categoryService: CategoryService,
   ) {}
 
   async create(
@@ -55,27 +57,58 @@ export class SequenceService {
       });
   }
 
+  // TODO - Clean this method
   async findTags(projectId: string, sequenceId: string) {
-    console.log('===== SEQUENCE =====');
     const sequence: Sequence = await this.sequenceRepository
       .findOneByOrFail({ uuid: sequenceId, projectId: projectId })
       .catch((e) => {
         console.error(e);
         throw NotFoundException('sequence');
       });
-    console.log('sequence object :\n', sequence);
 
-    const tag: Tag[] = await this.tagRepository
+    const tags: Tag[] = await this.tagRepository
       .findBy({ projectId: projectId, sequenceId: sequenceId })
       .catch((e) => {
         console.error(e);
         throw NotFoundException('project or sequence');
       });
-    console.log('tag object :\n', tag);
+
+    const categoryIds: string[] = [];
+
+    for (const tag in tags) {
+      if (!categoryIds.includes(tags[tag].categoryId)) {
+        categoryIds.push(tags[tag].categoryId);
+      }
+    }
+
+    const categories = [];
+
+    for (const categoryId in categoryIds) {
+      categories[categoryIds[categoryId]] = (
+        await this.categoryService.findOne(projectId, categoryIds[categoryId])
+      ).name;
+    }
+
+    const res = {
+      categories: {},
+    };
+
+    let tmp = [];
+    for (const categoryId in categoryIds) {
+      tmp = [];
+      for (const tag in tags) {
+        if (categoryIds[categoryId] === tags[tag].categoryId) {
+          tmp.push(tags[tag]);
+        }
+      }
+      res.categories[categories[categoryIds[categoryId]]] = tmp;
+    }
 
     return {
-      ...sequence,
-      ...tag,
+      sequence: {
+        ...sequence,
+      },
+      ...res,
     };
   }
 

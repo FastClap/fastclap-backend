@@ -19,24 +19,12 @@ import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
 
 @Controller('project')
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(private readonly projectService: ProjectService) { }
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor('pdf', {
-      storage: diskStorage({
-        destination: '/home/node/app/files',
-        filename: fileManager.customFileName,
-      }),
-      fileFilter: uploadFileFilter,
-    }),
-  )
-  async create(
-    @Body() body: CreateProjectDto,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<string> {
+  async create(@Body() body: CreateProjectDto): Promise<string> {
     // TODO - Use types to pass the DTO to the service and get an Entity
-    return this.projectService.create(body, file);
+    return this.projectService.create(body);
   }
 
   @Get()
@@ -49,13 +37,29 @@ export class ProjectController {
     return this.projectService.findOne(projectId);
   }
 
-  // TODO - Create UUID DTO
   @Patch(':projectId')
   async update(
     @IsUuidParam('projectId') projectId: string,
     @Body() updateProjectDto: UpdateProjectDto,
   ): Promise<Project> {
     return this.projectService.update(projectId, updateProjectDto);
+  }
+
+  @Post('/:projectId/upload')
+  @UseInterceptors(
+    FileInterceptor('pdf', {
+      storage: diskStorage({
+        destination: '/home/node/app/files',
+        filename: fileManager.customFileName
+      }),
+      fileFilter: uploadFileFilter,
+    }),
+  )
+  async updateUpload(
+    @IsUuidParam('projectId') projectId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Project> {
+    return this.projectService.updateUpload(projectId, file);
   }
 
   @Delete(':projectId')

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectService } from 'apps/project/project.service';
 import { Tag } from 'apps/tag/tag.entity';
@@ -26,6 +26,22 @@ export class CategoryService {
     if (!project) {
       throw NotFoundException('project');
     }
+
+    const exist: Category = await this.categoryRepository.findOneBy({
+      name: createCategoryDto.name,
+      projectId: projectId,
+    });
+
+    if (exist) {
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          error: 'category name already exists.',
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
+
     const category: Category = this.categoryRepository.create({
       ...createCategoryDto,
       projectId: projectId,
@@ -56,14 +72,12 @@ export class CategoryService {
   }
 
   async findTags(projectId: string, categoryId: string) {
-    console.log('===== CATEGORY =====');
     const category: Category = await this.categoryRepository
       .findOneByOrFail({ uuid: categoryId, projectId: projectId })
       .catch((e) => {
         console.error(e);
         throw NotFoundException('sequence');
       });
-    console.log('category object :\n', category);
 
     const tag: Tag[] = await this.tagRepository
       .findBy({ projectId: projectId, categoryId: categoryId })
@@ -71,11 +85,12 @@ export class CategoryService {
         console.error(e);
         throw NotFoundException('project or sequence');
       });
-    console.log('tag object :\n', tag);
 
     return {
-      ...category,
-      ...tag,
+      sequence: {
+        ...category,
+      },
+      tags: [...tag],
     };
   }
 

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tag } from './tag.entity';
@@ -7,9 +7,9 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { CategoryService } from 'apps/category/category.service';
 import { ProjectService } from 'apps/project/project.service';
 import { SequenceService } from 'apps/sequence/sequence.service';
-// import { NotFoundException } from '@app/exceptions';
 import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 import { BadRequestException } from 'apps/utils/exceptions/bad-request.exception';
+import { ConflictException } from 'apps/utils/exceptions/conflict.exception';
 
 @Injectable()
 export class TagService {
@@ -21,26 +21,14 @@ export class TagService {
     private readonly sequenceService: SequenceService,
   ) {}
 
-  throwAlreadyExist(type: string): HttpException {
-    return new HttpException(
-      {
-        status: HttpStatus.BAD_REQUEST,
-        error: type + ' already exist.',
-      },
-      HttpStatus.BAD_REQUEST,
-    );
-  }
-
   async create(projectId: string, createTagDto: CreateTagDto): Promise<string> {
     const tagId: boolean = await this.exist(createTagDto.uuid);
     if (tagId) {
-      // throw NotFoundException('tag');
-      throw this.throwAlreadyExist('tag');
+      throw ConflictException('tag');
     }
     const project: boolean = await this.projectService.exist(projectId);
     if (!project) {
       throw BadRequestException('id', 'uuid');
-      // throw NotFoundException('project');
     }
 
     const category: boolean = await this.categoryService.exist(

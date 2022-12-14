@@ -7,6 +7,9 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { CategoryService } from 'apps/category/category.service';
 import { ProjectService } from 'apps/project/project.service';
 import { SequenceService } from 'apps/sequence/sequence.service';
+// import { NotFoundException } from '@app/exceptions';
+import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
+import { BadRequestException } from 'apps/utils/exceptions/bad-request.exception';
 
 @Injectable()
 export class TagService {
@@ -17,16 +20,6 @@ export class TagService {
     private readonly categoryService: CategoryService,
     private readonly sequenceService: SequenceService,
   ) {}
-
-  throwUndefinedElement(type: string): HttpException {
-    return new HttpException(
-      {
-        status: HttpStatus.NOT_FOUND,
-        error: type + ' not found.',
-      },
-      HttpStatus.NOT_FOUND,
-    );
-  }
 
   throwAlreadyExist(type: string): HttpException {
     return new HttpException(
@@ -41,25 +34,27 @@ export class TagService {
   async create(projectId: string, createTagDto: CreateTagDto): Promise<string> {
     const tagId: boolean = await this.exist(createTagDto.uuid);
     if (tagId) {
+      // throw NotFoundException('tag');
       throw this.throwAlreadyExist('tag');
     }
     const project: boolean = await this.projectService.exist(projectId);
     if (!project) {
-      throw this.throwUndefinedElement('project');
+      throw BadRequestException('id', 'uuid');
+      // throw NotFoundException('project');
     }
 
     const category: boolean = await this.categoryService.exist(
       createTagDto.categoryId,
     );
     if (!category) {
-      throw this.throwUndefinedElement('category');
+      throw NotFoundException('category');
     }
 
     const sequence: boolean = await this.sequenceService.exist(
       createTagDto.sequenceId,
     );
     if (!sequence) {
-      throw this.throwUndefinedElement('sequence');
+      throw NotFoundException('sequence');
     }
 
     const tag: Tag = this.tagsRepository.create({
@@ -78,7 +73,7 @@ export class TagService {
       .findOneByOrFail({ uuid: tagId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('tag');
+        throw NotFoundException('tag');
       });
   }
 
@@ -87,7 +82,7 @@ export class TagService {
       .update({ uuid: tagId, projectId: projectId }, updateTagDto)
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('tag');
+        throw NotFoundException('tag');
       });
     return this.findOne(projectId, tagId);
   }
@@ -97,7 +92,7 @@ export class TagService {
       .delete({ uuid: tagId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('tag');
+        throw NotFoundException('tag');
       });
     return result.affected + ' tag has been successfully deleted';
   }
@@ -107,7 +102,7 @@ export class TagService {
   //     .delete({ projectId: projectId })
   //     .catch((e) => {
   //       console.error(e);
-  //       throw this.throwUndefinedElement('project');
+  //       throw NotFoundException('project');
   //     });
   //   return result.affected + ' tag have been successfully deleted';
   // }
@@ -117,7 +112,7 @@ export class TagService {
   //     .delete({ categoryId: categoryId })
   //     .catch((e) => {
   //       console.error(e);
-  //       throw this.throwUndefinedElement('category');
+  //       throw NotFoundException('category');
   //     });
   //   return result.affected + ' tag have been successfully deleted';
   // }

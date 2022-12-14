@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Sequence } from './sequence.entity';
@@ -6,7 +6,7 @@ import { Tag } from 'apps/tag/tag.entity';
 import { CreateSequenceDto } from './dto/create-sequence.dto';
 import { UpdateSequenceDto } from './dto/update-sequence.dto';
 import { ProjectService } from 'apps/project/project.service';
-import { Category } from 'apps/category/category.entity';
+import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 import { CategoryService } from 'apps/category/category.service';
 
 @Injectable()
@@ -20,23 +20,13 @@ export class SequenceService {
     private readonly categoryService: CategoryService,
   ) {}
 
-  throwUndefinedElement(type: string): HttpException {
-    return new HttpException(
-      {
-        status: HttpStatus.NOT_FOUND,
-        error: type + 'not found.',
-      },
-      HttpStatus.NOT_FOUND,
-    );
-  }
-
   async create(
     projectId: string,
     createSequenceDto: CreateSequenceDto,
   ): Promise<string> {
     const project: boolean = await this.projectService.exist(projectId);
     if (!project) {
-      throw this.throwUndefinedElement('project');
+      throw NotFoundException('project');
     }
     const sequence: Sequence = this.sequenceRepository.create({
       ...createSequenceDto,
@@ -54,7 +44,7 @@ export class SequenceService {
       .findBy({ projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
   }
 
@@ -63,7 +53,7 @@ export class SequenceService {
       .findOneByOrFail({ uuid: sequenceId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
   }
 
@@ -73,14 +63,14 @@ export class SequenceService {
       .findOneByOrFail({ uuid: sequenceId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
 
     const tags: Tag[] = await this.tagRepository
       .findBy({ projectId: projectId, sequenceId: sequenceId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project or sequence');
+        throw NotFoundException('project or sequence');
       });
 
     const categoryIds: string[] = [];
@@ -131,7 +121,7 @@ export class SequenceService {
       .update({ uuid: sequenceId, projectId: projectId }, updateSequenceDto)
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
     return this.findOne(projectId, sequenceId);
   }
@@ -141,7 +131,7 @@ export class SequenceService {
       .delete({ uuid: sequenceId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
     return result.affected + ' sequence has been successfully deleted';
   }
@@ -151,7 +141,7 @@ export class SequenceService {
   //     .delete({ projectId: projectId })
   //     .catch((e) => {
   //       console.error(e);
-  //       throw this.throwUndefinedElement('project');
+  //       throw NotFoundException('project');
   //     });
   //   return result.affected + ' sequence have been successfully deleted';
   // }

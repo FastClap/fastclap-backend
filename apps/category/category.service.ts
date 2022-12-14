@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 
 @Injectable()
 export class CategoryService {
@@ -17,23 +18,13 @@ export class CategoryService {
     private readonly projectService: ProjectService,
   ) {}
 
-  throwUndefinedElement(type: string): HttpException {
-    return new HttpException(
-      {
-        status: HttpStatus.NOT_FOUND,
-        error: type + ' not found.',
-      },
-      HttpStatus.NOT_FOUND,
-    );
-  }
-
   async create(
     projectId: string,
     createCategoryDto: CreateCategoryDto,
   ): Promise<string> {
     const project: boolean = await this.projectService.exist(projectId);
     if (!project) {
-      throw this.throwUndefinedElement('project');
+      throw NotFoundException('project');
     }
 
     const exist: Category = await this.categoryRepository.findOneBy({
@@ -67,7 +58,7 @@ export class CategoryService {
       .findBy({ projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('category');
+        throw NotFoundException('category');
       });
   }
 
@@ -76,7 +67,7 @@ export class CategoryService {
       .findOneByOrFail({ uuid: categoryId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('category');
+        throw NotFoundException('category');
       });
   }
 
@@ -85,14 +76,14 @@ export class CategoryService {
       .findOneByOrFail({ uuid: categoryId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
 
     const tag: Tag[] = await this.tagRepository
       .findBy({ projectId: projectId, categoryId: categoryId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project or sequence');
+        throw NotFoundException('project or sequence');
       });
 
     return {
@@ -112,7 +103,7 @@ export class CategoryService {
       .update({ uuid: categoryId, projectId: projectId }, updateCategoryDto)
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('category');
+        throw NotFoundException('category');
       });
     return this.findOne(projectId, categoryId);
   }
@@ -122,7 +113,7 @@ export class CategoryService {
       .delete({ uuid: categoryId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('category');
+        throw NotFoundException('category');
       });
     return result.affected + ' category has been successfully deleted';
   }
@@ -132,7 +123,7 @@ export class CategoryService {
       .delete({ projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project');
+        throw NotFoundException('project');
       });
     return result.affected + ' category have been successfully deleted';
   }

@@ -1,17 +1,9 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Patch, Delete } from '@nestjs/common';
 import { SequenceService } from './sequence.service';
 import { CreateSequenceDto } from './dto/create-sequence.dto';
 import { UpdateSequenceDto } from './dto/update-sequence.dto';
 import { Sequence } from './sequence.entity';
-import { Tag } from 'apps/tag/tag.entity';
+import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
 
 @Controller('project/:projectId/sequence')
 export class SequenceController {
@@ -19,29 +11,31 @@ export class SequenceController {
 
   @Post()
   async create(
-    @Param('projectId') projectId: string,
+    @IsUuidParam('projectId') projectId: string,
     @Body() createSequenceDto: CreateSequenceDto,
   ): Promise<string> {
     return this.sequenceService.create(projectId, createSequenceDto);
   }
 
   @Get()
-  async findAll(@Param('projectId') projectId: string): Promise<Sequence[]> {
+  async findAll(
+    @IsUuidParam('projectId') projectId: string,
+  ): Promise<Sequence[]> {
     return this.sequenceService.findAll(projectId);
   }
 
   @Get(':sequenceId')
   async findOne(
-    @Param('projectId') projectId: string,
-    @Param('sequenceId') sequenceId: string,
+    @IsUuidParam('projectId') projectId: string,
+    @IsUuidParam('sequenceId') sequenceId: string,
   ) {
     return this.sequenceService.findTags(projectId, sequenceId);
   }
 
   @Patch(':sequenceId')
   async update(
-    @Param('projectId') projectId: string,
-    @Param('sequenceId') sequenceId: string,
+    @IsUuidParam('projectId') projectId: string,
+    @IsUuidParam('sequenceId') sequenceId: string,
     @Body() updateSequenceDto: UpdateSequenceDto,
   ): Promise<Sequence> {
     return this.sequenceService.update(
@@ -53,8 +47,8 @@ export class SequenceController {
 
   @Delete(':sequenceId')
   async delete(
-    @Param('projectId') projectId: string,
-    @Param('sequenceId') sequenceId: string,
+    @IsUuidParam('projectId') projectId: string,
+    @IsUuidParam('sequenceId') sequenceId: string,
   ): Promise<string> {
     return this.sequenceService.delete(projectId, sequenceId);
   }

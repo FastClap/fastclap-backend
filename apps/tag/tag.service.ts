@@ -28,7 +28,21 @@ export class TagService {
     );
   }
 
+  throwAlreadyExist(type: string): HttpException {
+    return new HttpException(
+      {
+        status: HttpStatus.BAD_REQUEST,
+        error: type + ' already exist.',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
   async create(projectId: string, createTagDto: CreateTagDto): Promise<string> {
+    const tagId: boolean = await this.exist(createTagDto.uuid);
+    if (tagId) {
+      throw this.throwAlreadyExist('tag');
+    }
     const project: boolean = await this.projectService.exist(projectId);
     if (!project) {
       throw this.throwUndefinedElement('project');
@@ -53,6 +67,10 @@ export class TagService {
       projectId: projectId,
     });
     return (await this.tagsRepository.save(tag)).uuid;
+  }
+
+  async exist(id: string): Promise<boolean> {
+    return this.tagsRepository.exist({ where: { uuid: id } });
   }
 
   async findOne(projectId: string, tagId: string): Promise<Tag> {

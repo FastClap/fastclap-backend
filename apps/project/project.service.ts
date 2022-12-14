@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import * as path from 'path';
-import { loadFile } from "./project.utils";
+import { loadFile } from './project.utils';
 
 @Injectable()
 export class ProjectService {

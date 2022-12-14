@@ -19,7 +19,7 @@ import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
 
 @Controller('project')
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) { }
+  constructor(private readonly projectService: ProjectService) {}
 
   @Post()
   async create(@Body() body: CreateProjectDto): Promise<string> {
@@ -50,7 +50,7 @@ export class ProjectController {
     FileInterceptor('pdf', {
       storage: diskStorage({
         destination: '/home/node/app/files',
-        filename: fileManager.customFileName
+        filename: fileManager.customFileName,
       }),
       fileFilter: uploadFileFilter,
     }),

@@ -45,6 +45,8 @@ export class TagService {
       throw NotFoundException('sequence');
     }
 
+    this.projectService.updateMetaData(projectId, createTagDto.metadata);
+
     const tag: Tag = this.tagsRepository.create({
       ...createTagDto,
       projectId: projectId,

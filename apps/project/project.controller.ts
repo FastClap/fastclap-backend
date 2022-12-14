@@ -22,9 +22,21 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
-  async create(@Body() body: CreateProjectDto): Promise<string> {
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: '/home/node/app/files',
+        filename: fileManager.customFileName,
+      }),
+      fileFilter: uploadFileFilter,
+    }),
+  )
+  async create(
+    @Body() body: CreateProjectDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<string> {
     // TODO - Use types to pass the DTO to the service and get an Entity
-    return this.projectService.create(body);
+    return this.projectService.create(body, file);
   }
 
   @Get()
@@ -45,19 +57,11 @@ export class ProjectController {
     return this.projectService.update(projectId, updateProjectDto);
   }
 
-  @Post('/:projectId/upload')
-  @UseInterceptors(
-      FileInterceptor('pdf', {
-        storage: diskStorage({
-          destination: '/home/node/app/files',
-          filename: fileManager.customFileName
-        }),
-        fileFilter: uploadFileFilter
-      })
-  )
-  async updateUpload(@Param('projectId') projectId: string, @UploadedFile() file: Express.Multer.File): Promise<Project> {
-    return this.projectService.updateUpload(projectId, file);
-  }
+  // @Post('/:projectId/upload')
+  //
+  // async updateUpload(@Param('projectId') projectId: string): Promise<Project> {
+  //   return this.projectService.updateUpload(projectId, file);
+  // }
 
   @Delete(':projectId')
   async delete(@Param('projectId') projectId: string): Promise<string> {

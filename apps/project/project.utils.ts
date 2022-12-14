@@ -22,7 +22,8 @@ export const loadFile = (filepath: string): Promise<string> => {
       if (err) resolve(err);
 
       const title_regex = /([0-9]+[.]+ )+([^a-z]+.)+(\n)/gm;
-      data = data.replace(title_regex, function replace(match) {
+      data = data.replace(title_regex, function replace(match, g1, g2, g3) {
+        console.log({match: g1, g2, g3});
         return '<div className="bold-title">' + match + '</div>'; // h2 + strong
       });
 
@@ -34,10 +35,11 @@ export const loadFile = (filepath: string): Promise<string> => {
       const breakline_regex = /\n/gm;
       data = data.replace(breakline_regex, '</br>');
 
-      const pagenumber_regex = /[0-9]+\n\f/g;
-      data = data.replace(pagenumber_regex, function replace(match) {
-        return '<div className="indent-pagenumber">' + match + '</div>'; // indent left margin
-      });
+      // const pagenumber_regex = /[0-9]+\n\f/g;
+      // data = data.replace(pagenumber_regex, function replace(match, groups) {
+      //   console.log(groups)
+      //   return '<div className="indent-pagenumber">' + match + '</div>'; // indent left margin
+      // });
 
       resolve(data);
     });

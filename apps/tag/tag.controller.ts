@@ -1,16 +1,9 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Patch, Delete } from '@nestjs/common';
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './tag.entity';
+import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
 
 @Controller('project/:projectId/tag')
 export class TagController {
@@ -18,7 +11,7 @@ export class TagController {
 
   @Post()
   async create(
-    @Param('projectId') projectId: string,
+    @IsUuidParam('projectId') projectId: string,
     @Body() createTagDto: CreateTagDto,
   ): Promise<string> {
     return this.tagService.create(projectId, createTagDto);
@@ -26,16 +19,16 @@ export class TagController {
 
   @Get(':tagId')
   async findOne(
-    @Param('projectId') projectId: string,
-    @Param('tagId') tagId: string,
+    @IsUuidParam('projectId') projectId: string,
+    @IsUuidParam('tagId') tagId: string,
   ): Promise<Tag> {
     return this.tagService.findOne(projectId, tagId);
   }
 
   @Patch(':tagId')
   async update(
-    @Param('projectId') projectId: string,
-    @Param('tagId') tagId: string,
+    @IsUuidParam('projectId') projectId: string,
+    @IsUuidParam('tagId') tagId: string,
     @Body() updateTagDto: UpdateTagDto,
   ): Promise<Tag> {
     return this.tagService.update(projectId, tagId, updateTagDto);
@@ -43,8 +36,8 @@ export class TagController {
 
   @Delete(':tagId')
   async delete(
-    @Param('projectId') projectId: string,
-    @Param('tagId') tagId: string,
+    @IsUuidParam('projectId') projectId: string,
+    @IsUuidParam('tagId') tagId: string,
   ): Promise<string> {
     return this.tagService.delete(projectId, tagId);
   }

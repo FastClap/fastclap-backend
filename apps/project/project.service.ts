@@ -1,11 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Project } from './project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import * as path from 'path';
-import { loadFile } from "./project.utils";
+import { loadFile } from './project.utils';
+import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 
 @Injectable()
 export class ProjectService {
@@ -13,16 +14,6 @@ export class ProjectService {
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
   ) {}
-
-  throwUndefinedElement(type: string): HttpException {
-    return new HttpException(
-      {
-        status: HttpStatus.NOT_FOUND,
-        error: 'Undefined ' + type,
-      },
-      HttpStatus.NOT_FOUND,
-    );
-  }
 
   async create(body: CreateProjectDto, file: Express.Multer.File): Promise<string> {
 
@@ -46,10 +37,10 @@ export class ProjectService {
       .findOneByOrFail({ uuid: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project');
+        throw NotFoundException('project');
       });
     if (!res) {
-      throw this.throwUndefinedElement('project');
+      throw NotFoundException('project');
     }
     return res;
   }
@@ -61,7 +52,7 @@ export class ProjectService {
   async update(projectId: string, body: UpdateProjectDto): Promise<Project> {
     this.projectRepository.update({ uuid: projectId }, body).catch((e) => {
       console.error(e);
-      throw this.throwUndefinedElement('project');
+      throw NotFoundException('project');
     });
     return this.findOne(projectId);
   }
@@ -71,7 +62,7 @@ export class ProjectService {
       .delete({ uuid: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project');
+        throw NotFoundException('project');
       });
     return result.affected + ' project has been successfully deleted';
   }

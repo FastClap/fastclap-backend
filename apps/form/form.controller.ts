@@ -1,15 +1,8 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Patch, Delete } from '@nestjs/common';
 import { FormService } from './form.service';
 import { CreateFormDto } from './dto/create-form.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
+import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
 
 @Controller('form')
 export class FormController {
@@ -21,17 +14,17 @@ export class FormController {
   }
 
   @Get('project/:id')
-  async getAllByProject(@Param('id') id: string) {
+  async getAllByProject(@IsUuidParam('id') id: string) {
     return this.formService.getAllByProject(id);
   }
 
   @Get('category/:id')
-  async getAllByCategory(@Param('id') id: string) {
+  async getAllByCategory(@IsUuidParam('id') id: string) {
     return this.formService.getAllByCategory(id);
   }
 
   @Get(':id')
-  async getOne(@Param('id') id: string) {
+  async getOne(@IsUuidParam('id') id: string) {
     return this.formService.getOne(id);
   }
 
@@ -41,22 +34,22 @@ export class FormController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFormDto: UpdateFormDto) {
+  update(@IsUuidParam('id') id: string, @Body() updateFormDto: UpdateFormDto) {
     return this.formService.update(id, updateFormDto);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
+  async delete(@IsUuidParam('id') id: string) {
     return this.formService.delete(id);
   }
 
   @Delete('project/:id')
-  async deleteByProject(@Param('id') id: string) {
+  async deleteByProject(@IsUuidParam('id') id: string) {
     return this.formService.deleteByProject(id);
   }
 
   @Delete('category/:id')
-  async deleteByCategory(@Param('id') id: string) {
+  async deleteByCategory(@IsUuidParam('id') id: string) {
     return this.formService.deleteByCategory(id);
   }
 }

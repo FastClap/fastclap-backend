@@ -1,15 +1,8 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Patch, Delete } from '@nestjs/common';
 import { FormComedianService } from './form.comedian.service';
 import { CreateFormComedianDto } from './dto/create-form-comedian.dto';
 import { UpdateFormComedianDto } from './dto/update-form-comedian.dto';
+import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
 
 @Controller('form')
 export class FormComedianController {
@@ -21,7 +14,7 @@ export class FormComedianController {
   }
 
   @Get(':id')
-  async getOne(@Param('id') id: string) {
+  async getOne(@IsUuidParam('id') id: string) {
     return this.formComedianService.getOne(id);
   }
 
@@ -32,14 +25,14 @@ export class FormComedianController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @IsUuidParam('id') id: string,
     @Body() updateFormDto: UpdateFormComedianDto,
   ) {
     return this.formComedianService.update(id, updateFormDto);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
+  async delete(@IsUuidParam('id') id: string) {
     return this.formComedianService.delete(id);
   }
 }

@@ -20,7 +20,8 @@ export class Project {
   @Column({ nullable: true })
   html?: string;
 
-  // TODO - Put highlighted metadata
+  @Column({ nullable: true })
+  metadata?: string;
 
   @CreateDateColumn({
     type: 'timestamp',

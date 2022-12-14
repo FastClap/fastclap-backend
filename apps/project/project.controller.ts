@@ -47,7 +47,7 @@ export class ProjectController {
 
   @Post('/:projectId/upload')
   @UseInterceptors(
-    FileInterceptor('pdf', {
+    FileInterceptor('file', {
       storage: diskStorage({
         destination: '/home/node/app/files',
         filename: fileManager.customFileName

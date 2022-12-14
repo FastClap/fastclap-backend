@@ -13,7 +13,7 @@ export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
-  ) { }
+  ) {}
 
   async create(body: CreateProjectDto): Promise<string> {
     const project: Project = await this.projectRepository.create(body);
@@ -65,6 +65,16 @@ export class ProjectService {
         throw NotFoundException('project');
       });
     return this.findOne(projectId);
+  }
+
+  async updateMetaData(projectId: string, metadata: string): Promise<string> {
+    this.projectRepository
+      .update({ uuid: projectId }, { metadata: metadata })
+      .catch((e) => {
+        console.error(e);
+        throw NotFoundException('project');
+      });
+    return (await this.findOne(projectId)).metadata;
   }
 
   async delete(projectId: string): Promise<string> {

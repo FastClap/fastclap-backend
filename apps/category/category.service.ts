@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectService } from 'apps/project/project.service';
 import { Tag } from 'apps/tag/tag.entity';
@@ -7,6 +7,7 @@ import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
+import { ConflictException } from 'apps/utils/exceptions/conflict.exception';
 
 @Injectable()
 export class CategoryService {
@@ -33,13 +34,7 @@ export class CategoryService {
     });
 
     if (exist) {
-      throw new HttpException(
-        {
-          status: HttpStatus.CONFLICT,
-          error: 'category name already exists.',
-        },
-        HttpStatus.CONFLICT,
-      );
+      throw ConflictException('category name');
     }
 
     const category: Category = this.categoryRepository.create({

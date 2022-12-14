@@ -8,6 +8,7 @@ import { UpdateSequenceDto } from './dto/update-sequence.dto';
 import { ProjectService } from 'apps/project/project.service';
 import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 import { CategoryService } from 'apps/category/category.service';
+import { ConflictException } from 'apps/utils/exceptions/conflict.exception';
 
 @Injectable()
 export class SequenceService {
@@ -28,6 +29,15 @@ export class SequenceService {
     if (!project) {
       throw NotFoundException('project');
     }
+
+    const exist: Sequence = await this.sequenceRepository.findOneBy({
+      name: createSequenceDto.name,
+      projectId: projectId,
+    });
+    if (exist) {
+      throw ConflictException('sequence name');
+    }
+
     const sequence: Sequence = this.sequenceRepository.create({
       ...createSequenceDto,
       projectId: projectId,

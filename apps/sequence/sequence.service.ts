@@ -8,6 +8,7 @@ import { UpdateSequenceDto } from './dto/update-sequence.dto';
 import { ProjectService } from 'apps/project/project.service';
 import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 import { CategoryService } from 'apps/category/category.service';
+import { Category } from "../category/category.entity";
 
 @Injectable()
 export class SequenceService {
@@ -59,12 +60,16 @@ export class SequenceService {
 
   // TODO - Clean this method
   async findTags(projectId: string, sequenceId: string) {
+    const res = {};
+
     const sequence: Sequence = await this.sequenceRepository
       .findOneByOrFail({ uuid: sequenceId, projectId: projectId })
       .catch((e) => {
         console.error(e);
         throw NotFoundException('sequence');
       });
+
+    res['sequence'] = { ...sequence };
 
     const tags: Tag[] = await this.tagRepository
       .findBy({ projectId: projectId, sequenceId: sequenceId })
@@ -84,32 +89,24 @@ export class SequenceService {
     const categories = [];
 
     for (const categoryId in categoryIds) {
-      categories[categoryIds[categoryId]] = (
-        await this.categoryService.findOne(projectId, categoryIds[categoryId])
-      ).name;
+      const category: Category = await this.categoryService.findOne(
+        projectId,
+        categoryIds[categoryId],
+      );
+      categories.push({ ...category, tags: [] });
     }
 
-    const res = {
-      categories: {},
-    };
-
-    let tmp = [];
-    for (const categoryId in categoryIds) {
-      tmp = [];
+    for (const category in categories) {
       for (const tag in tags) {
-        if (categoryIds[categoryId] === tags[tag].categoryId) {
-          tmp.push(tags[tag]);
+        if (categories[category].uuid === tags[tag].categoryId) {
+          categories[category].tags.push(tags[tag]);
         }
       }
-      res.categories[categories[categoryIds[categoryId]]] = tmp;
     }
 
-    return {
-      sequence: {
-        ...sequence,
-      },
-      ...res,
-    };
+    res['categories'] = [...categories];
+
+    return res;
   }
 
   async update(

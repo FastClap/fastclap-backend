@@ -24,16 +24,8 @@ export class ProjectService {
     );
   }
 
-  async create(body: CreateProjectDto, file: Express.Multer.File): Promise<string> {
-
-    let file_path = path.resolve(process.cwd());
-    let file_content = await loadFile(path.join(file_path, "files/", file.filename));
-
-    const project: Project = await this.projectRepository.create({
-      ...body,
-      html: file_content,
-    });
-
+  async create(body: CreateProjectDto): Promise<string> {
+    const project: Project = await this.projectRepository.create(body);
     return (await this.projectRepository.save(project)).uuid;
   }
 
@@ -60,6 +52,17 @@ export class ProjectService {
 
   async update(projectId: string, body: UpdateProjectDto): Promise<Project> {
     this.projectRepository.update({ uuid: projectId }, body).catch((e) => {
+      console.error(e);
+      throw this.throwUndefinedElement('project');
+    });
+    return this.findOne(projectId);
+  }
+
+  async updateUpload(projectId: string, file: Express.Multer.File): Promise<Project> {
+    let file_path = path.resolve(process.cwd());
+    let file_content = await loadFile(path.join(file_path, "files/", file.filename));
+
+    this.projectRepository.update({ uuid: projectId }, { html: file_content } ).catch((e) => {
       console.error(e);
       throw this.throwUndefinedElement('project');
     });

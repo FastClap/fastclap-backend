@@ -7,17 +7,69 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import * as path from 'path';
 import { loadFile } from './project.utils';
 import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
+import { Category } from '../category/category.entity';
+import { Sequence } from '../sequence/sequence.entity';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(Sequence)
+    private readonly sequenceRepository: Repository<Sequence>,
   ) {}
 
   async create(body: CreateProjectDto): Promise<string> {
     const project: Project = await this.projectRepository.create(body);
-    return (await this.projectRepository.save(project)).uuid;
+
+    const res = await this.projectRepository.save(project);
+
+    const characterCategory: Category = await this.categoryRepository.create({
+      name: 'Personnage',
+      projectId: res.uuid,
+      color: '#ED3437',
+    });
+    const characterCategoryRes = await this.categoryRepository.save(
+      characterCategory,
+    );
+    console.log(
+      `Category '${characterCategoryRes.name}' (uuid: ${characterCategoryRes.uuid}) created !`,
+    );
+
+    const placeCategory: Category = await this.categoryRepository.create({
+      name: 'Lieu',
+      projectId: res.uuid,
+      color: '#2F5DDE',
+    });
+    const placeCategoryRes = await this.categoryRepository.save(placeCategory);
+    console.log(
+      `Category '${placeCategoryRes.name}' (uuid: ${placeCategoryRes.uuid}) created !`,
+    );
+
+    const sceneryCategory: Category = await this.categoryRepository.create({
+      name: 'Décor',
+      projectId: res.uuid,
+      color: '#2FDE78',
+    });
+    const sceneryCategoryRes = await this.categoryRepository.save(
+      sceneryCategory,
+    );
+    console.log(
+      `Category '${sceneryCategoryRes.name}' (uuid: ${sceneryCategoryRes.uuid}) created !`,
+    );
+
+    const firstSequence: Sequence = await this.sequenceRepository.create({
+      name: 'Séquence 1',
+      projectId: res.uuid,
+    });
+    const firstSequenceRes = await this.sequenceRepository.save(firstSequence);
+    console.log(
+      `Sequence '${firstSequenceRes.name}' (uuid: ${firstSequenceRes.uuid}) created !`,
+    );
+
+    return res.uuid;
   }
 
   async findAll(): Promise<Project[]> {

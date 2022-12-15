@@ -4,6 +4,7 @@ import { ProjectService } from './project.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Project } from './project.entity';
 import {MulterModule} from "@nestjs/platform-express";
+import {subscribeOn} from "rxjs";
 
 @Module({
   imports: [

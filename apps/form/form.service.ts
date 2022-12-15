@@ -1,10 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Form } from './form.entity';
 import { CreateFormDto } from './dto/create-form.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
 import { CategoryService } from 'apps/category/category.service';
+import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 
 @Injectable()
 export class FormService {
@@ -13,16 +14,6 @@ export class FormService {
     private formsRepository: Repository<Form>,
     private readonly categoriesService: CategoryService,
   ) {}
-
-  throwUndefinedElement(type: string): HttpException {
-    return new HttpException(
-      {
-        status: HttpStatus.NOT_FOUND,
-        error: 'Undefined ' + type,
-      },
-      HttpStatus.NOT_FOUND,
-    );
-  }
 
   getAll(): Promise<Form[]> {
     return this.formsRepository.find();
@@ -33,10 +24,10 @@ export class FormService {
       .findBy({ projectId: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project');
+        throw NotFoundException('project');
       });
     if (!res) {
-      throw this.throwUndefinedElement('project');
+      throw NotFoundException('project');
     }
     return res;
   }
@@ -46,10 +37,10 @@ export class FormService {
       .findBy({ categoryId: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('category');
+        throw NotFoundException('category');
       });
     if (!res) {
-      throw this.throwUndefinedElement('category');
+      throw NotFoundException('category');
     }
     return res;
   }
@@ -59,7 +50,7 @@ export class FormService {
       .findOneByOrFail({ uuid: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('form');
+        throw NotFoundException('form');
       });
     return res;
   }
@@ -67,7 +58,7 @@ export class FormService {
   async create(body: CreateFormDto): Promise<string> {
     const categoryExist = await this.categoriesService.exist(body.categoryId);
     if (!categoryExist) {
-      throw this.throwUndefinedElement('category');
+      throw NotFoundException('category');
     }
     const newForm = this.formsRepository.create(body);
     return (await this.formsRepository.save(newForm)).uuid;
@@ -76,7 +67,7 @@ export class FormService {
   update(id: string, body: UpdateFormDto) {
     this.formsRepository.update({ uuid: id }, body).catch((e) => {
       console.error(e);
-      throw this.throwUndefinedElement('form');
+      throw NotFoundException('form');
     });
     return body;
   }
@@ -86,7 +77,7 @@ export class FormService {
       .delete({ uuid: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('form');
+        throw NotFoundException('form');
       });
     return result.affected + ' Forms have been successfully deleted';
   }
@@ -96,7 +87,7 @@ export class FormService {
       .delete({ projectId: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project');
+        throw NotFoundException('project');
       });
     return result.affected + ' Forms have been successfully deleted';
   }
@@ -106,7 +97,7 @@ export class FormService {
       .delete({ categoryId: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('category');
+        throw NotFoundException('category');
       });
     return result.affected + ' Forms have been successfully deleted';
   }

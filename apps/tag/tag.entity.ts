@@ -1,14 +1,14 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity({ name: 'tag' })
 export class Tag {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn()
   uuid!: string;
 
   @Column()
@@ -19,9 +19,6 @@ export class Tag {
 
   @Column()
   sequenceId!: string;
-
-  @Column()
-  metadata!: string;
 
   @Column()
   content!: string;

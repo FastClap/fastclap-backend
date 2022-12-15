@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FormPlace } from './form.place.entity';
 import { CreateFormPlaceDto } from './dto/create-form-place.dto';
 import { UpdateFormPlaceDto } from './dto/update-form-place.dto';
+import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 
 @Injectable()
 export class FormPlaceService {
@@ -11,16 +12,6 @@ export class FormPlaceService {
     @InjectRepository(FormPlace)
     private formsRepository: Repository<FormPlace>,
   ) {}
-
-  throwUndefinedElement(type: string): HttpException {
-    return new HttpException(
-      {
-        status: HttpStatus.NOT_FOUND,
-        error: 'Undefined ' + type,
-      },
-      HttpStatus.NOT_FOUND,
-    );
-  }
 
   getAll(): Promise<FormPlace[]> {
     return this.formsRepository.find();
@@ -31,7 +22,7 @@ export class FormPlaceService {
       .findOneByOrFail({ uuid: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('form');
+        throw NotFoundException('form');
       });
     return res;
   }
@@ -44,7 +35,7 @@ export class FormPlaceService {
   update(id: string, body: UpdateFormPlaceDto) {
     this.formsRepository.update({ uuid: id }, body).catch((e) => {
       console.error(e);
-      throw this.throwUndefinedElement('form');
+      throw NotFoundException('form');
     });
     return body;
   }
@@ -54,7 +45,7 @@ export class FormPlaceService {
       .delete({ uuid: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('form');
+        throw NotFoundException('form');
       });
     return result.affected + ' Forms have been successfully deleted';
   }

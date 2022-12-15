@@ -1,11 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Project } from './project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import * as path from 'path';
-import { loadFile } from "./project.utils";
+import { loadFile } from './project.utils';
+import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 
 @Injectable()
 export class ProjectService {
@@ -13,16 +14,6 @@ export class ProjectService {
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
   ) {}
-
-  throwUndefinedElement(type: string): HttpException {
-    return new HttpException(
-      {
-        status: HttpStatus.NOT_FOUND,
-        error: 'Undefined ' + type,
-      },
-      HttpStatus.NOT_FOUND,
-    );
-  }
 
   async create(body: CreateProjectDto): Promise<string> {
     const project: Project = await this.projectRepository.create(body);
@@ -38,10 +29,10 @@ export class ProjectService {
       .findOneByOrFail({ uuid: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project');
+        throw NotFoundException('project');
       });
     if (!res) {
-      throw this.throwUndefinedElement('project');
+      throw NotFoundException('project');
     }
     return res;
   }
@@ -53,20 +44,37 @@ export class ProjectService {
   async update(projectId: string, body: UpdateProjectDto): Promise<Project> {
     this.projectRepository.update({ uuid: projectId }, body).catch((e) => {
       console.error(e);
-      throw this.throwUndefinedElement('project');
+      throw NotFoundException('project');
     });
     return this.findOne(projectId);
   }
 
-  async updateUpload(projectId: string, file: Express.Multer.File): Promise<Project> {
-    let file_path = path.resolve(process.cwd());
-    let file_content = await loadFile(path.join(file_path, "files/", file.filename));
+  async updateUpload(
+    projectId: string,
+    file: Express.Multer.File,
+  ): Promise<Project> {
+    const file_path = path.resolve(process.cwd());
+    const file_content = await loadFile(
+      path.join(file_path, 'files/', file.filename),
+    );
 
-    this.projectRepository.update({ uuid: projectId }, { html: file_content } ).catch((e) => {
-      console.error(e);
-      throw this.throwUndefinedElement('project');
-    });
+    this.projectRepository
+      .update({ uuid: projectId }, { html: file_content })
+      .catch((e) => {
+        console.error(e);
+        throw NotFoundException('project');
+      });
     return this.findOne(projectId);
+  }
+
+  async updateMetaData(projectId: string, metadata: string): Promise<string> {
+    this.projectRepository
+      .update({ uuid: projectId }, { metadata: metadata })
+      .catch((e) => {
+        console.error(e);
+        throw NotFoundException('project');
+      });
+    return (await this.findOne(projectId)).metadata;
   }
 
   async delete(projectId: string): Promise<string> {
@@ -74,7 +82,7 @@ export class ProjectService {
       .delete({ uuid: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project');
+        throw NotFoundException('project');
       });
     return result.affected + ' project has been successfully deleted';
   }

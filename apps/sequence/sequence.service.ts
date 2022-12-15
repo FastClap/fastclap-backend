@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Sequence } from './sequence.entity';
@@ -6,6 +6,10 @@ import { Tag } from 'apps/tag/tag.entity';
 import { CreateSequenceDto } from './dto/create-sequence.dto';
 import { UpdateSequenceDto } from './dto/update-sequence.dto';
 import { ProjectService } from 'apps/project/project.service';
+import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
+import { CategoryService } from 'apps/category/category.service';
+import { Category } from 'apps/category/category.entity';
+import { ConflictException } from 'apps/utils/exceptions/conflict.exception';
 
 @Injectable()
 export class SequenceService {
@@ -15,17 +19,8 @@ export class SequenceService {
     @InjectRepository(Tag)
     private tagRepository: Repository<Tag>,
     private readonly projectService: ProjectService,
+    private readonly categoryService: CategoryService,
   ) {}
-
-  throwUndefinedElement(type: string): HttpException {
-    return new HttpException(
-      {
-        status: HttpStatus.NOT_FOUND,
-        error: type + 'not found.',
-      },
-      HttpStatus.NOT_FOUND,
-    );
-  }
 
   async create(
     projectId: string,
@@ -33,8 +28,17 @@ export class SequenceService {
   ): Promise<string> {
     const project: boolean = await this.projectService.exist(projectId);
     if (!project) {
-      throw this.throwUndefinedElement('project');
+      throw NotFoundException('project');
     }
+
+    const exist: Sequence = await this.sequenceRepository.findOneBy({
+      name: createSequenceDto.name,
+      projectId: projectId,
+    });
+    if (exist) {
+      throw ConflictException('sequence name');
+    }
+
     const sequence: Sequence = this.sequenceRepository.create({
       ...createSequenceDto,
       projectId: projectId,
@@ -51,7 +55,7 @@ export class SequenceService {
       .findBy({ projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
   }
 
@@ -60,32 +64,59 @@ export class SequenceService {
       .findOneByOrFail({ uuid: sequenceId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
   }
 
+  // TODO - Clean this method
   async findTags(projectId: string, sequenceId: string) {
-    console.log('===== SEQUENCE =====');
+    const res = {};
+
     const sequence: Sequence = await this.sequenceRepository
       .findOneByOrFail({ uuid: sequenceId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
-    console.log('sequence object :\n', sequence);
 
-    const tag: Tag[] = await this.tagRepository
+    res['sequence'] = { ...sequence };
+
+    const tags: Tag[] = await this.tagRepository
       .findBy({ projectId: projectId, sequenceId: sequenceId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('project or sequence');
+        throw NotFoundException('project or sequence');
       });
-    console.log('tag object :\n', tag);
 
-    return {
-      ...sequence,
-      ...tag,
-    };
+    const categoryIds: string[] = [];
+
+    for (const tag in tags) {
+      if (!categoryIds.includes(tags[tag].categoryId)) {
+        categoryIds.push(tags[tag].categoryId);
+      }
+    }
+
+    const categories = [];
+
+    for (const categoryId in categoryIds) {
+      const category: Category = await this.categoryService.findOne(
+        projectId,
+        categoryIds[categoryId],
+      );
+      categories.push({ ...category, tags: [] });
+    }
+
+    for (const category in categories) {
+      for (const tag in tags) {
+        if (categories[category].uuid === tags[tag].categoryId) {
+          categories[category].tags.push(tags[tag]);
+        }
+      }
+    }
+
+    res['categories'] = [...categories];
+
+    return res;
   }
 
   async update(
@@ -97,7 +128,7 @@ export class SequenceService {
       .update({ uuid: sequenceId, projectId: projectId }, updateSequenceDto)
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
     return this.findOne(projectId, sequenceId);
   }
@@ -107,7 +138,7 @@ export class SequenceService {
       .delete({ uuid: sequenceId, projectId: projectId })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('sequence');
+        throw NotFoundException('sequence');
       });
     return result.affected + ' sequence has been successfully deleted';
   }
@@ -117,7 +148,7 @@ export class SequenceService {
   //     .delete({ projectId: projectId })
   //     .catch((e) => {
   //       console.error(e);
-  //       throw this.throwUndefinedElement('project');
+  //       throw NotFoundException('project');
   //     });
   //   return result.affected + ' sequence have been successfully deleted';
   // }

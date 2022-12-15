@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FormComedian } from './form.comedian.entity';
 import { CreateFormComedianDto } from './dto/create-form-comedian.dto';
 import { UpdateFormComedianDto } from './dto/update-form-comedian.dto';
+import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 
 @Injectable()
 export class FormComedianService {
@@ -11,16 +12,6 @@ export class FormComedianService {
     @InjectRepository(FormComedian)
     private formsRepository: Repository<FormComedian>,
   ) {}
-
-  throwUndefinedElement(type: string): HttpException {
-    return new HttpException(
-      {
-        status: HttpStatus.NOT_FOUND,
-        error: 'Undefined ' + type,
-      },
-      HttpStatus.NOT_FOUND,
-    );
-  }
 
   getAll(): Promise<FormComedian[]> {
     return this.formsRepository.find();
@@ -31,7 +22,7 @@ export class FormComedianService {
       .findOneByOrFail({ uuid: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('form');
+        throw NotFoundException('form');
       });
     return res;
   }
@@ -44,7 +35,7 @@ export class FormComedianService {
   update(id: string, body: UpdateFormComedianDto) {
     this.formsRepository.update({ uuid: id }, body).catch((e) => {
       console.error(e);
-      throw this.throwUndefinedElement('form');
+      throw NotFoundException('form');
     });
     return body;
   }
@@ -54,7 +45,7 @@ export class FormComedianService {
       .delete({ uuid: id })
       .catch((e) => {
         console.error(e);
-        throw this.throwUndefinedElement('form');
+        throw NotFoundException('form');
       });
     return result.affected + ' Forms have been successfully deleted';
   }

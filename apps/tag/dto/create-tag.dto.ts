@@ -4,6 +4,11 @@ export class CreateTagDto {
   @IsString()
   @IsNotEmpty()
   @IsUUID()
+  uuid!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsUUID()
   categoryId!: string;
 
   @IsString()
@@ -13,9 +18,9 @@ export class CreateTagDto {
 
   @IsString()
   @IsNotEmpty()
-  metadata!: string;
+  content!: string;
 
   @IsString()
   @IsNotEmpty()
-  content!: string;
+  metadata!: string;
 }

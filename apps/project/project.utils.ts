@@ -15,8 +15,6 @@ export class fileManager {
 }
 
 export const loadFile = (filepath: string): Promise<string> => {
-    console.log("loadFile function called");
-
   return new Promise<string>((resolve) => {
     const pdfUtil = require('pdf-to-text');
 

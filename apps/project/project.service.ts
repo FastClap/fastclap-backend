@@ -27,7 +27,7 @@ export class ProjectService {
     const res = await this.projectRepository.save(project);
 
     const characterCategory: Category = await this.categoryRepository.create({
-      name: 'Personnage',
+      name: 'Personnages',
       projectId: res.uuid,
       color: '#ED3437',
     });
@@ -39,7 +39,7 @@ export class ProjectService {
     );
 
     const placeCategory: Category = await this.categoryRepository.create({
-      name: 'Lieu',
+      name: 'Lieux',
       projectId: res.uuid,
       color: '#2F5DDE',
     });
@@ -49,7 +49,7 @@ export class ProjectService {
     );
 
     const sceneryCategory: Category = await this.categoryRepository.create({
-      name: 'Décor',
+      name: 'Décors',
       projectId: res.uuid,
       color: '#2FDE78',
     });

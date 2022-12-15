@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tag } from './tag.entity';
@@ -16,8 +16,11 @@ export class TagService {
   constructor(
     @InjectRepository(Tag)
     private tagsRepository: Repository<Tag>,
+    @Inject(forwardRef(() => ProjectService))
     private readonly projectService: ProjectService,
+    @Inject(forwardRef(() => CategoryService))
     private readonly categoryService: CategoryService,
+    @Inject(forwardRef(() => SequenceService))
     private readonly sequenceService: SequenceService,
   ) {}
 
@@ -87,23 +90,36 @@ export class TagService {
     return result.affected + ' tag has been successfully deleted';
   }
 
-  // async deleteByProject(projectId: string) {
-  //   const result = await this.tagsRepository
-  //     .delete({ projectId: projectId })
-  //     .catch((e) => {
-  //       console.error(e);
-  //       throw NotFoundException('project');
-  //     });
-  //   return result.affected + ' tag have been successfully deleted';
-  // }
+  async deleteByCategory(categoryId: string) {
+    const sequences = await this.tagsRepository.findBy({
+      categoryId: categoryId,
+    });
+    if (!sequences.length) {
+      throw NotFoundException('category');
+    }
+    await this.tagsRepository.remove(sequences);
+    return sequences.length + ' tags have been successfully deleted';
+  }
 
-  // async deleteByCategory(categoryId: string) {
-  //   const result = await this.tagsRepository
-  //     .delete({ categoryId: categoryId })
-  //     .catch((e) => {
-  //       console.error(e);
-  //       throw NotFoundException('category');
-  //     });
-  //   return result.affected + ' tag have been successfully deleted';
-  // }
+  async deleteBySequence(sequenceId: string) {
+    const sequences = await this.tagsRepository.findBy({
+      sequenceId: sequenceId,
+    });
+    if (!sequences.length) {
+      throw NotFoundException('sequence');
+    }
+    await this.tagsRepository.remove(sequences);
+    return sequences.length + ' tags have been successfully deleted';
+  }
+
+  async deleteByProject(projectId: string) {
+    const sequences = await this.tagsRepository.findBy({
+      projectId: projectId,
+    });
+    if (!sequences.length) {
+      throw NotFoundException('sequence');
+    }
+    await this.tagsRepository.remove(sequences);
+    return sequences.length + ' tags have been successfully deleted';
+  }
 }

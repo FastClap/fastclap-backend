@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectService } from 'apps/project/project.service';
 import { Tag } from 'apps/tag/tag.entity';
@@ -8,6 +8,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 import { ConflictException } from 'apps/utils/exceptions/conflict.exception';
+import { TagService } from 'apps/tag/tag.service';
 
 @Injectable()
 export class CategoryService {
@@ -16,7 +17,10 @@ export class CategoryService {
     private categoryRepository: Repository<Category>,
     @InjectRepository(Tag)
     private tagRepository: Repository<Tag>,
+    @Inject(forwardRef(() => ProjectService))
     private readonly projectService: ProjectService,
+    @Inject(forwardRef(() => TagService))
+    private readonly tagService: TagService,
   ) {}
 
   async create(
@@ -104,22 +108,29 @@ export class CategoryService {
   }
 
   async delete(projectId: string, categoryId: string): Promise<string> {
-    const result = await this.categoryRepository
-      .delete({ uuid: categoryId, projectId: projectId })
-      .catch((e) => {
-        console.error(e);
-        throw NotFoundException('category');
-      });
-    return result.affected + ' category has been successfully deleted';
+    const categories = await this.categoryRepository.findBy({
+      uuid: categoryId,
+      projectId: projectId,
+    });
+    console.log(categories.length);
+    if (!categories.length) {
+      throw NotFoundException('category or project');
+    }
+    this.tagService.deleteByCategory(categoryId);
+    await this.categoryRepository.remove(categories);
+    return categories.length + ' categories has been successfully deleted';
   }
 
   async deleteByProject(projectId: string) {
-    const result = await this.categoryRepository
-      .delete({ projectId: projectId })
-      .catch((e) => {
-        console.error(e);
-        throw NotFoundException('project');
-      });
-    return result.affected + ' category have been successfully deleted';
+    const categories = await this.categoryRepository.findBy({
+      projectId: projectId,
+    });
+    console.log(categories.length);
+    if (!categories.length) {
+      throw NotFoundException('category or project');
+    }
+    this.tagService.deleteByProject(projectId);
+    await this.categoryRepository.remove(categories);
+    return categories.length + ' categories has been successfully deleted';
   }
 }

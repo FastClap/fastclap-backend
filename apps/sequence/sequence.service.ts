@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Sequence } from './sequence.entity';
@@ -10,6 +10,8 @@ import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 import { CategoryService } from 'apps/category/category.service';
 import { Category } from 'apps/category/category.entity';
 import { ConflictException } from 'apps/utils/exceptions/conflict.exception';
+import { TagService } from 'apps/tag/tag.service';
+import { Project } from 'apps/project/project.entity';
 
 @Injectable()
 export class SequenceService {
@@ -18,8 +20,11 @@ export class SequenceService {
     private sequenceRepository: Repository<Sequence>,
     @InjectRepository(Tag)
     private tagRepository: Repository<Tag>,
+    @Inject(forwardRef(() => ProjectService))
     private readonly projectService: ProjectService,
     private readonly categoryService: CategoryService,
+    @Inject(forwardRef(() => TagService))
+    private readonly tagService: TagService,
   ) {}
 
   async create(
@@ -134,22 +139,28 @@ export class SequenceService {
   }
 
   async delete(projectId: string, sequenceId: string): Promise<string> {
-    const result = await this.sequenceRepository
-      .delete({ uuid: sequenceId, projectId: projectId })
-      .catch((e) => {
-        console.error(e);
-        throw NotFoundException('sequence');
-      });
-    return result.affected + ' sequence has been successfully deleted';
+    const sequences = await this.sequenceRepository.findBy({
+      uuid: sequenceId,
+      projectId: projectId,
+    });
+    console.log(sequences.length);
+    if (!sequences.length) {
+      throw NotFoundException('sequence or project');
+    }
+    this.tagService.deleteBySequence(sequenceId);
+    await this.sequenceRepository.remove(sequences);
+    return sequences.length + ' sequence has been successfully deleted';
   }
 
-  // async deleteByProject(projectId: string) {
-  //   const result = await this.sequenceRepository
-  //     .delete({ projectId: projectId })
-  //     .catch((e) => {
-  //       console.error(e);
-  //       throw NotFoundException('project');
-  //     });
-  //   return result.affected + ' sequence have been successfully deleted';
-  // }
+  async deleteByProject(projectId: string) {
+    const sequences = await this.sequenceRepository.findBy({
+      projectId: projectId,
+    });
+    if (!sequences.length) {
+      throw NotFoundException('project');
+    }
+    this.tagService.deleteByProject(projectId);
+    await this.sequenceRepository.remove(sequences);
+    return sequences.length + ' sequence has been successfully deleted';
+  }
 }

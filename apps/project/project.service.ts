@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Project } from './project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,12 +7,18 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import * as path from 'path';
 import { loadFile } from './project.utils';
 import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
+import { SequenceService } from 'apps/sequence/sequence.service';
+import { CategoryService } from 'apps/category/category.service';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    @Inject(forwardRef(() => SequenceService))
+    private readonly sequenceService: SequenceService,
+    @Inject(forwardRef(() => CategoryService))
+    private readonly categoryService: CategoryService,
   ) {}
 
   async create(body: CreateProjectDto): Promise<string> {
@@ -78,6 +84,9 @@ export class ProjectService {
   }
 
   async delete(projectId: string): Promise<string> {
+    console.log("deleting");
+    this.categoryService.deleteByProject(projectId);
+    this.sequenceService.deleteByProject(projectId);
     const result = await this.projectRepository
       .delete({ uuid: projectId })
       .catch((e) => {

@@ -8,6 +8,8 @@ import { CategoryModule } from './category/category.module';
 import { SequenceModule } from './sequence/sequence.module';
 import { TagModule } from './tag/tag.module';
 
+import { CreateProjectSubscriber } from "./project/subscribers/create-project.subscriber";
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -21,6 +23,7 @@ import { TagModule } from './tag/tag.module';
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
         entities: [],
+        subscribers: [ CreateProjectSubscriber ],
         synchronize: true,
         autoLoadEntities: true,
       }),

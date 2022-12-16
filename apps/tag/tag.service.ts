@@ -10,6 +10,7 @@ import { SequenceService } from 'apps/sequence/sequence.service';
 import { NotFoundException } from 'apps/utils/exceptions/not-found.exception';
 import { BadRequestException } from 'apps/utils/exceptions/bad-request.exception';
 import { ConflictException } from 'apps/utils/exceptions/conflict.exception';
+import { DeleteTagDto } from './dto/delete-tag.dto';
 
 @Injectable()
 export class TagService {
@@ -77,13 +78,14 @@ export class TagService {
     return this.findOne(projectId, tagId);
   }
 
-  async delete(projectId: string, tagId: string) {
+  async delete(projectId: string, tagId: string, deleteTagDto: DeleteTagDto) {
     const result = await this.tagsRepository
       .delete({ uuid: tagId, projectId: projectId })
       .catch((e) => {
         console.error(e);
         throw NotFoundException('tag');
       });
+    this.projectService.updateMetaData(projectId, deleteTagDto.metadata);
     return result.affected + ' tag has been successfully deleted';
   }
 

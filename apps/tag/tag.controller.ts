@@ -4,6 +4,7 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './tag.entity';
 import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
+import { DeleteTagDto } from './dto/delete-tag.dto';
 
 @Controller('project/:projectId/tag')
 export class TagController {
@@ -38,7 +39,8 @@ export class TagController {
   async delete(
     @IsUuidParam('projectId') projectId: string,
     @IsUuidParam('tagId') tagId: string,
+    @Body() deleteTagDto: DeleteTagDto,
   ): Promise<string> {
-    return this.tagService.delete(projectId, tagId);
+    return this.tagService.delete(projectId, tagId, deleteTagDto);
   }
 }

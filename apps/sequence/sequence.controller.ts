@@ -4,7 +4,9 @@ import { CreateSequenceDto } from './dto/create-sequence.dto';
 import { UpdateSequenceDto } from './dto/update-sequence.dto';
 import { Sequence } from './sequence.entity';
 import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Sequence')
 @Controller('project/:projectId/sequence')
 export class SequenceController {
   constructor(private readonly sequenceService: SequenceService) {}

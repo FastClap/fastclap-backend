@@ -23,15 +23,6 @@ export class User {
   @Column()
   password!: string;
 
-  @Column()
-  gender!: string;
-
-  @Column()
-  phone!: string;
-
-  @Column()
-  age!: number;
-
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP()',

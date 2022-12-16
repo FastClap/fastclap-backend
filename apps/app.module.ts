@@ -3,7 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from './app.entity';
+import { ProjectModule } from './project/project.module';
+import { CategoryModule } from './category/category.module';
+import { SequenceModule } from './sequence/sequence.module';
+import { TagModule } from './tag/tag.module';
+
+import { CreateProjectSubscriber } from './project/subscribers/create-project.subscriber';
 
 @Module({
   imports: [
@@ -17,11 +22,17 @@ import { User } from './app.entity';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [User],
+        entities: [],
+        subscribers: [CreateProjectSubscriber],
         synchronize: true,
+        autoLoadEntities: true,
       }),
       inject: [ConfigService],
     }),
+    CategoryModule,
+    TagModule,
+    ProjectModule,
+    SequenceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

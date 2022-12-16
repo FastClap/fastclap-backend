@@ -4,7 +4,9 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './tag.entity';
 import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Tag')
 @Controller('project/:projectId/tag')
 export class TagController {
   constructor(private readonly tagService: TagService) {}

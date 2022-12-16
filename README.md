@@ -75,9 +75,9 @@ docker-compose --profile all up
 If you have any error (especially already in use error), delete all your containers, images and volumes ([Docker documentation](https://docs.docker.com/engine/reference/commandline/rm/)) and stop running postgresql services.
 ### Usage
 
-**[COMING SOON]** You can access the platform by this link :  [http://localhost:3000/](http://localhost:3000/)
-**[COMING SOON]** Now that your project is running on port 3000, you can check that all is good by entering [http://localhost:3000/healthcheck](http://localhost:3000/healthcheck) in your browser.</br>
-**[COMING SOON]** You can also have access to the documentation at the following address:  [http://localhost:3000/docs](http://localhost:3000/docs)
+**[COMING SOON]** You can access the platform by this link :  [http://localhost:3000/](http://localhost:3000/)</br></br>
+Now that your project is running on port 3000, you can check that the FastClap API is up by entering [http://localhost:3000/healthcheck](http://localhost:3000/healthcheck) in your browser.</br></br>
+You can also have access to the **documentation** at the following address: [http://localhost:3000/docs](http://localhost:3000/docs) (the error codes, the responses bodies and the requested bodies are not yet set up). If you need the JSON format of the API Documentation, just enter [http://localhost:3000/docs-json](http://localhost:3000/docs-json) in your browser.
 
 ## Get involved
 

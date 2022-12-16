@@ -16,7 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { fileManager, uploadFileFilter } from './project.utils';
 import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Project')
 @Controller('project')

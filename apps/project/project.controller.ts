@@ -16,29 +16,32 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { fileManager, uploadFileFilter } from './project.utils';
 import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('Project')
 @Controller('project')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
+  @ApiOperation({ operationId: 'ProjectCreate' })
   @Post()
   async create(@Body() body: CreateProjectDto): Promise<string> {
-    // TODO - Use types to pass the DTO to the service and get an Entity
     return this.projectService.create(body);
   }
 
+  @ApiOperation({ operationId: 'ProjectFindAll' })
   @Get()
   async findAll(): Promise<Project[]> {
     return this.projectService.findAll();
   }
 
+  @ApiOperation({ operationId: 'ProjectFindOne' })
   @Get(':projectId')
   async findOne(@IsUuidParam('projectId') projectId: string): Promise<Project> {
     return this.projectService.findOne(projectId);
   }
 
+  @ApiOperation({ operationId: 'ProjectUpdate' })
   @Patch(':projectId')
   async update(
     @IsUuidParam('projectId') projectId: string,
@@ -47,6 +50,7 @@ export class ProjectController {
     return this.projectService.update(projectId, updateProjectDto);
   }
 
+  @ApiOperation({ operationId: 'ProjectUploadFile' })
   @Post('/:projectId/upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -64,6 +68,7 @@ export class ProjectController {
     return this.projectService.updateUpload(projectId, file);
   }
 
+  @ApiOperation({ operationId: 'ProjectDelete' })
   @Delete(':projectId')
   async delete(@IsUuidParam('projectId') projectId: string): Promise<string> {
     return this.projectService.delete(projectId);

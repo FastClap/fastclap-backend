@@ -4,13 +4,14 @@ import { CreateSequenceDto } from './dto/create-sequence.dto';
 import { UpdateSequenceDto } from './dto/update-sequence.dto';
 import { Sequence } from './sequence.entity';
 import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('Sequence')
 @Controller('project/:projectId/sequence')
 export class SequenceController {
   constructor(private readonly sequenceService: SequenceService) {}
 
+  @ApiOperation({ operationId: 'SequenceCreate' })
   @Post()
   async create(
     @IsUuidParam('projectId') projectId: string,
@@ -19,6 +20,7 @@ export class SequenceController {
     return this.sequenceService.create(projectId, createSequenceDto);
   }
 
+  @ApiOperation({ operationId: 'SequenceFindAll' })
   @Get()
   async findAll(
     @IsUuidParam('projectId') projectId: string,
@@ -26,6 +28,7 @@ export class SequenceController {
     return this.sequenceService.findAll(projectId);
   }
 
+  @ApiOperation({ operationId: 'SequenceFindOne' })
   @Get(':sequenceId')
   async findOne(
     @IsUuidParam('projectId') projectId: string,
@@ -34,6 +37,7 @@ export class SequenceController {
     return this.sequenceService.findTags(projectId, sequenceId);
   }
 
+  @ApiOperation({ operationId: 'SequenceUpdate' })
   @Patch(':sequenceId')
   async update(
     @IsUuidParam('projectId') projectId: string,
@@ -47,6 +51,7 @@ export class SequenceController {
     );
   }
 
+  @ApiOperation({ operationId: 'SequenceDelete' })
   @Delete(':sequenceId')
   async delete(
     @IsUuidParam('projectId') projectId: string,

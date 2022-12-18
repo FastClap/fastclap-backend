@@ -4,13 +4,14 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './category.entity';
 import { IsUuidParam } from 'apps/utils/decorators/Is-uuid-param.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('Category')
 @Controller('project/:projectId/category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @ApiOperation({ operationId: 'CategoryCreate' })
   @Post()
   async create(
     @IsUuidParam('projectId') projectId: string,
@@ -19,6 +20,7 @@ export class CategoryController {
     return this.categoryService.create(projectId, createCategoryDto);
   }
 
+  @ApiOperation({ operationId: 'CategoryFindAll' })
   @Get()
   async findAll(
     @IsUuidParam('projectId') projectId: string,
@@ -26,6 +28,7 @@ export class CategoryController {
     return this.categoryService.findAll(projectId);
   }
 
+  @ApiOperation({ operationId: 'CategoryFindOne' })
   @Get(':categoryId')
   async findOne(
     @IsUuidParam('projectId') projectId: string,
@@ -34,6 +37,7 @@ export class CategoryController {
     return this.categoryService.findTags(projectId, categoryId);
   }
 
+  @ApiOperation({ operationId: 'CategoryUpdate' })
   @Patch(':categoryId')
   async update(
     @IsUuidParam('projectId') projectId: string,
@@ -47,6 +51,7 @@ export class CategoryController {
     );
   }
 
+  @ApiOperation({ operationId: 'CategoryDelete' })
   @Delete(':categoryId')
   async delete(
     @IsUuidParam('projectId') projectId: string,
